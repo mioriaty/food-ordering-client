@@ -1,4 +1,4 @@
-import { Role } from '@/infrastructure/types/constants';
+import { Role } from '@/shared/types/constants';
 import z from 'zod';
 
 export const LoginBody = z

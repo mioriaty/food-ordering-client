@@ -1,5 +1,5 @@
-import { OrderSchema } from '@/infrastructure/schemas/order.schema';
-import { Role } from '@/infrastructure/types/constants';
+import { OrderSchema } from '@/entities/models/order.model';
+import { Role } from '@/shared/types/constants';
 import z from 'zod';
 
 export const GuestLoginBody = z

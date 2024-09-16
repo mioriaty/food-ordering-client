@@ -1,4 +1,4 @@
-import { DishSchema } from '@/infrastructure/schemas/dish.schema';
+import { DishSchema } from '@/entities/models/dish.model';
 import z from 'zod';
 
 export const DashboardIndicatorQueryParams = z.object({

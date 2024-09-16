@@ -1,6 +1,6 @@
-import { AccountSchema } from '@/infrastructure/schemas/account.schema';
-import { TableSchema } from '@/infrastructure/schemas/table.schema';
-import { DishStatusValues, OrderStatusValues } from '@/infrastructure/types/constants';
+import { AccountSchema } from '@/entities/models/account.model';
+import { TableSchema } from '@/entities/models/table.model';
+import { DishStatusValues, OrderStatusValues } from '@/shared/types/constants';
 import z from 'zod';
 
 const DishSnapshotSchema = z.object({
@@ -14,6 +14,7 @@ const DishSnapshotSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date()
 });
+
 export const OrderSchema = z.object({
   id: z.number(),
   guestId: z.number().nullable(),

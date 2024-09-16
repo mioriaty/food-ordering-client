@@ -1,7 +1,7 @@
 'use client';
 
-import { APP_ENV } from '@/infrastructure/schemas/env.schema';
-import { RegisterRequestSchema, RegisterRequestType } from '@/infrastructure/schemas/register.schema';
+import { RegisterRequestSchema, RegisterRequestType } from '@/entities/models/register.model';
+import { CLIENT_ENV } from '@/infrastructure/schemas/env.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -30,7 +30,7 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (values: RegisterRequestType) => {
-    await fetch(`${APP_ENV.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
+    await fetch(`${CLIENT_ENV.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
       method: 'POST',
       body: JSON.stringify(values),
       headers: {

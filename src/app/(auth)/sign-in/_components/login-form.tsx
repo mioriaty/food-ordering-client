@@ -1,6 +1,6 @@
 'use client';
 
-import { LoginBody, LoginBodyType } from '@/infrastructure/schemas/auth.schema';
+import { LoginBody, LoginBodyType } from '@/entities/models/auth.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';

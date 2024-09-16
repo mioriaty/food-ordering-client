@@ -1,4 +1,4 @@
-import { DishStatusValues } from '@/infrastructure/types/constants';
+import { DishStatusValues } from '@/shared/types/constants';
 import z from 'zod';
 
 export const CreateDishBody = z.object({
