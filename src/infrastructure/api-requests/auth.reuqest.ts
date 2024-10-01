@@ -7,6 +7,10 @@ import {
 } from '@/entities/models/auth.model';
 import http from '@/shared/utils/http';
 
+/*
+  Chú thích: nhưng request chứa "s" ở đằng trước là các request được gọi từ server.
+  Ngược lại các request không chứa "s" là các request được gọi từ client.
+*/
 const authApiRequest = {
   refreshTokenRequest: null as Promise<{
     status: number;

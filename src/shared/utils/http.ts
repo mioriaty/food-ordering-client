@@ -27,7 +27,7 @@ const request = async <Response>(
     body = options.body;
   } else if (options?.body) {
     body = JSON.stringify(options.body);
-  }
+}
   const baseHeaders: {
     [key: string]: string;
   } =

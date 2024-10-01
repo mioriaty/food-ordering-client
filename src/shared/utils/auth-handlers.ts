@@ -1,5 +1,5 @@
-import authApiRequest from '@/infrastructure/api-requests/auth';
-import guestApiRequest from '@/infrastructure/api-requests/guest';
+import authApiRequest from '@/infrastructure/api-requests/auth.reuqest';
+import guestApiRequest from '@/infrastructure/api-requests/guest.request';
 import { Role } from '@/shared/types/constants';
 import { TokenPayload } from '@/shared/types/jwt';
 import { isBrowser } from '@/shared/utils/browser';

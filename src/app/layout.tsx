@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
+import { Toaster } from '@/shared/components/ui/toaster';
+
 import { ThemeProvider } from '@/shared/components/theme-provider';
 
 import './globals.css';
@@ -25,6 +27,7 @@ export default function RootLayout({
       <body suppressContentEditableWarning className={`${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

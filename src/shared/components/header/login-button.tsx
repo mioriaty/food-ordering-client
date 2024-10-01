@@ -9,7 +9,7 @@ const LoginButton: React.FC = () => {
   const router = useRouter();
 
   const redirectToSignIn = () => {
-    router.push('/sign-in');
+    router.push('/login');
   };
 
   return (
