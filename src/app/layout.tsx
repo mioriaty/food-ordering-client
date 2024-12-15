@@ -1,20 +1,18 @@
+import { ThemeProvider } from '@/libs/components/theme-provider';
+import { Toaster } from '@/libs/components/ui/toaster';
+import { cn } from '@/libs/utils/string';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-
-import { Toaster } from '@/shared/components/ui/toaster';
-
-import { ThemeProvider } from '@/shared/components/theme-provider';
+import { Inter as FontSans } from 'next/font/google';
 
 import './globals.css';
 
-const inter = Inter({
-  subsets: ['vietnamese'],
+const fontSans = FontSans({
+  subsets: ['latin'],
   variable: '--font-sans'
 });
-
 export const metadata: Metadata = {
-  title: 'Next learning',
-  description: 'The way Duong learn Next.js'
+  title: 'Big Boy Restaurant',
+  description: 'The best restaurant in the world'
 };
 
 export default function RootLayout({
@@ -23,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressContentEditableWarning>
-      <body suppressContentEditableWarning className={`${inter.className}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

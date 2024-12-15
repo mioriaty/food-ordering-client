@@ -45,4 +45,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 # next-boilerplate-shadcn-prettier-eslint
 
 # next-learning
+
 # food-ordering-client
