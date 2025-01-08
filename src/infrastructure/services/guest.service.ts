@@ -18,11 +18,7 @@ const guestService = {
     http.post<GuestLoginResType>('/api/guest/auth/login', body, {
       baseUrl: ''
     }),
-  sLogout: (
-    body: LogoutBodyType & {
-      accessToken: string;
-    }
-  ) =>
+  sLogout: (body: LogoutBodyType) =>
     http.post(
       '/guest/auth/logout',
       {

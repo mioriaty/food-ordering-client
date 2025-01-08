@@ -1,7 +1,14 @@
 'use client';
 
 import { Button } from '@/libs/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/libs/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/libs/components/ui/sheet';
 import { cn } from '@/libs/utils/string';
 import { Package2, PanelLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -20,6 +27,10 @@ export default function MobileNavLinks() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="sm:max-w-xs">
+        <SheetHeader className="sr-only">
+          <SheetTitle />
+          <SheetDescription />
+        </SheetHeader>
         <nav className="grid gap-6 text-lg font-medium">
           <Link
             href="#"

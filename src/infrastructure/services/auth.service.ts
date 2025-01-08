@@ -7,6 +7,8 @@ import {
 } from '@/domain/schemas/auth.schema';
 import http from '@/infrastructure/http/fetcher';
 
+// sLogin: server login
+// login: client login
 const authService = {
   refreshTokenRequest: null as Promise<{
     status: number;
@@ -17,11 +19,7 @@ const authService = {
     http.post<LoginResType>('/api/auth/login', body, {
       baseUrl: ''
     }),
-  sLogout: (
-    body: LogoutBodyType & {
-      accessToken: string;
-    }
-  ) =>
+  sLogout: (body: LogoutBodyType) =>
     http.post(
       '/auth/logout',
       {
@@ -33,7 +31,8 @@ const authService = {
         }
       }
     ),
-  logout: () => http.post('/api/auth/logout', null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AT và RT vào body vì AT và RT tự  động gửi thông qua cookie rồi
+  // client gọi đến route handler, không cần truyền AT và RT vào body vì AT và RT tự động gửi thông qua cookie rồi
+  logout: () => http.post('/api/auth/logout', null, { baseUrl: '' }),
   sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>('/auth/refresh-token', body),
   async refreshToken() {
     if (this.refreshTokenRequest) {

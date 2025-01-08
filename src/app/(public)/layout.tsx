@@ -1,6 +1,13 @@
 import DarkModeToggle from '@/libs/components/dark-mode-toggle';
 import { Button } from '@/libs/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/libs/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/libs/components/ui/sheet';
 import { Menu, Package2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,6 +36,10 @@ export default function Layout({
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
+            <SheetHeader className="sr-only">
+              <SheetTitle />
+              <SheetDescription />
+            </SheetHeader>
             <nav className="grid gap-6 text-lg font-medium">
               <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
                 <Package2 className="h-6 w-6" />

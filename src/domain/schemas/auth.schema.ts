@@ -1,4 +1,5 @@
 import { Role } from '@/libs/constants/type';
+import { access } from 'fs';
 import z from 'zod';
 
 export const LoginBody = z
@@ -46,7 +47,8 @@ export type RefreshTokenResType = z.TypeOf<typeof RefreshTokenRes>;
 
 export const LogoutBody = z
   .object({
-    refreshToken: z.string()
+    refreshToken: z.string(),
+    accessToken: z.string()
   })
   .strict();
 
