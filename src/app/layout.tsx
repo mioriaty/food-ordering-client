@@ -1,3 +1,4 @@
+import { TanstackProvider } from '@/libs/components/tanstack-provider';
 import { ThemeProvider } from '@/libs/components/theme-provider';
 import { Toaster } from '@/libs/components/ui/toaster';
 import { cn } from '@/libs/utils/string';
@@ -11,7 +12,7 @@ const fontSans = FontSans({
   variable: '--font-sans'
 });
 export const metadata: Metadata = {
-  title: 'Big Boy Restaurant',
+  title: 'Duongggggg',
   description: 'The best restaurant in the world'
 };
 
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <TanstackProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </TanstackProvider>
       </body>
     </html>
   );

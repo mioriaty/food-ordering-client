@@ -7,7 +7,7 @@ import { Package2, PanelLeft } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import menuItems from '@/app/manage/menuItems';
+import menuItems from '@/app/manage/menu-items';
 
 export default function MobileNavLinks() {
   const pathname = usePathname();

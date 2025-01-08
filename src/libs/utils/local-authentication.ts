@@ -1,3 +1,7 @@
+import authService from '@/infrastructure/services/auth.service';
+import guestService from '@/infrastructure/services/guest.service';
+import { Role } from '@/libs/constants/type';
+import { decodeToken } from '@/libs/utils/decode-token';
 import { isBrowser } from '@/libs/utils/is-browser';
 
 export const getAccessTokenFromLocalStorage = () => (isBrowser ? localStorage.getItem('accessToken') : null);
@@ -40,7 +44,7 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
     // Gọi API refresh token
     try {
       const role = decodedRefreshToken.role;
-      const res = role === Role.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken();
+      const res = role === Role.Guest ? await guestService.refreshToken() : await authService.refreshToken();
 
       if (res) {
         setAccessTokenToLocalStorage(res.payload.data.accessToken);

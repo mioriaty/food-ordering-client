@@ -1,11 +1,14 @@
 'use client';
 
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
+import { useLoginMutation } from '@/infrastructure/queries/useAuth';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
+import { toast } from '@/libs/components/ui/use-toast';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -17,6 +20,22 @@ export default function LoginForm() {
       password: ''
     }
   });
+  const loginMutation = useLoginMutation();
+
+  const handleSubmit = async (data: LoginBodyType) => {
+    if (loginMutation.isPending) {
+      return;
+    }
+
+    try {
+      const response = await loginMutation.mutateAsync(data);
+      toast({
+        description: response.payload.message
+      });
+    } catch (error: any) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -26,7 +45,13 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-2 max-w-[600px] flex-shrink-0 w-full" noValidate>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit, (err) => {
+              console.error(err);
+            })}
+            className="space-y-2 max-w-[600px] flex-shrink-0 w-full"
+            noValidate
+          >
             <div className="grid gap-4">
               <FormField
                 control={form.control}
