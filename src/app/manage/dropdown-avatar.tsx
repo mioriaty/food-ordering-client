@@ -1,5 +1,6 @@
 'use client';
 
+import { useLoginMutation, useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -10,7 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/libs/components/ui/dropdown-menu';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const account = {
   name: 'Nguyễn Văn A',
@@ -18,6 +21,21 @@ const account = {
 };
 
 export default function DropdownAvatar() {
+  const logoutMutation = useLogoutMutation();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (logoutMutation.isPending) return;
+
+    try {
+      await logoutMutation.mutateAsync();
+      router.push('/');
+    } catch (error) {
+      const _error = error as Error;
+      handleErrorApi({ error: _error });
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -36,9 +54,11 @@ export default function DropdownAvatar() {
             Cài đặt
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Hỗ trợ</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">Hỗ trợ</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+          Đăng xuất
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

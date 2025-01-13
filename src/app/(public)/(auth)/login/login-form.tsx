@@ -10,6 +10,7 @@ import { Label } from '@/libs/components/ui/label';
 import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 export default function LoginForm() {
@@ -21,17 +22,17 @@ export default function LoginForm() {
     }
   });
   const loginMutation = useLoginMutation();
+  const router = useRouter();
 
   const handleSubmit = async (data: LoginBodyType) => {
-    if (loginMutation.isPending) {
-      return;
-    }
+    if (loginMutation.isPending) return;
 
     try {
       const response = await loginMutation.mutateAsync(data);
       toast({
         description: response.payload.message
       });
+      router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
     }
