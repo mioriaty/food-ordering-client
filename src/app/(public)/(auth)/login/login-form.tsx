@@ -2,6 +2,7 @@
 
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
+import { LoadingButton } from '@/libs/components/loading-button';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
@@ -82,9 +83,13 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
+              <LoadingButton
+                isLoading={form.formState.isLoading || form.formState.isSubmitting}
+                type="submit"
+                className="w-full"
+              >
                 Đăng nhập
-              </Button>
+              </LoadingButton>
               <Button variant="outline" className="w-full" type="button">
                 Đăng nhập bằng Google
               </Button>
