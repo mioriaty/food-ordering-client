@@ -72,7 +72,8 @@ export default function UpdateProfileForm() {
       const result = await updateMeMutation.mutateAsync(body);
 
       toast({
-        description: result.payload.message
+        description: result.payload.message,
+        variant: 'success'
       });
       refetch();
     } catch (error) {

@@ -1,4 +1,4 @@
-import { AccountResType, UpdateMeBodyType } from '@/domain/schemas/account.schema';
+import { AccountResType, ChangePasswordBodyType, UpdateMeBodyType } from '@/domain/schemas/account.schema';
 import http from '@/infrastructure/http/fetcher';
 
 const meService = {
@@ -8,6 +8,10 @@ const meService = {
   },
   updateMe: async (data: UpdateMeBodyType) => {
     const response = await http.put<AccountResType>('/accounts/me', data);
+    return response;
+  },
+  changePassword: async (data: ChangePasswordBodyType) => {
+    const response = await http.put<AccountResType>('/accounts/change-password', data);
     return response;
   }
 };

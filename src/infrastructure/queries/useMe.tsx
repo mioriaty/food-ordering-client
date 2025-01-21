@@ -19,3 +19,9 @@ export const useUpdateMeMutation = () => {
     mutationFn: meService.updateMe
   });
 };
+
+export const useChangePasswordMeMutation = () => {
+  return useMutation({
+    mutationFn: meService.changePassword
+  });
+};
