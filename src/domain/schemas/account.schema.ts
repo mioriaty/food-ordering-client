@@ -1,3 +1,4 @@
+import { LoginRes } from '@/domain/schemas/auth.schema';
 import { Role } from '@/libs/constants/type';
 import z from 'zod';
 
@@ -106,6 +107,14 @@ export const ChangePasswordBody = z
   });
 
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>;
+
+export const ChangePasswordV2Body = ChangePasswordBody;
+
+export type ChangePasswordV2BodyType = z.TypeOf<typeof ChangePasswordV2Body>;
+
+export const ChangePasswordV2Res = LoginRes;
+
+export type ChangePasswordV2ResType = z.TypeOf<typeof ChangePasswordV2Res>;
 
 export const AccountIdParam = z.object({
   id: z.coerce.number()

@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangePasswordBody, ChangePasswordBodyType } from '@/domain/schemas/account.schema';
+import { ChangePasswordV2Body, ChangePasswordV2BodyType } from '@/domain/schemas/account.schema';
 import { useChangePasswordMeMutation } from '@/infrastructure/queries/useMe';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Button } from '@/libs/components/ui/button';
@@ -10,14 +10,15 @@ import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
+import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/libs/utils/local-authentication';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 export default function ChangePasswordForm() {
   const changePasswordMutation = useChangePasswordMeMutation();
 
-  const form = useForm<ChangePasswordBodyType>({
-    resolver: zodResolver(ChangePasswordBody),
+  const form = useForm<ChangePasswordV2BodyType>({
+    resolver: zodResolver(ChangePasswordV2Body),
     defaultValues: {
       oldPassword: '',
       password: '',
@@ -26,15 +27,17 @@ export default function ChangePasswordForm() {
   });
 
   const handleReset = () => {
+    form.clearErrors();
     form.reset();
   };
 
-  const handleSubmit = async (data: ChangePasswordBodyType) => {
+  const handleSubmit = async (data: ChangePasswordV2BodyType) => {
     if (changePasswordMutation.isPending) return;
 
     try {
       const result = await changePasswordMutation.mutateAsync(data);
-
+      setAccessTokenToLocalStorage(result.payload.data.accessToken);
+      setRefreshTokenToLocalStorage(result.payload.data.refreshToken);
       toast({
         description: result.payload.message,
         variant: 'success'

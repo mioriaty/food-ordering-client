@@ -7,16 +7,27 @@ const unAuthPaths = ['/login'];
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isAuth = Boolean(request.cookies.get('accessToken')?.value);
+
+  const accessToken = request?.cookies?.get('accessToken')?.value;
+  const refreshToken = request?.cookies?.get('refreshToken')?.value;
 
   // Chưa login thì chuyển hướng về trang login
-  if (protectedPaths.some((path) => pathname.startsWith(path) && !isAuth)) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (protectedPaths.some((path) => pathname.startsWith(path) && !refreshToken)) {
+    const url = new URL('/login', request.url);
+    return NextResponse.redirect(url);
   }
 
   // Đã login thì chuyển hướng về trang chính
-  if (unAuthPaths.some((path) => pathname.startsWith(path) && isAuth)) {
-    return NextResponse.redirect(new URL('/', request.url));
+  if (unAuthPaths.some((path) => pathname.startsWith(path) && refreshToken)) {
+    const url = new URL('/', request.url);
+    return NextResponse.redirect(url);
+  }
+
+  // Đây là trường hợp accessToken hết hạn và refresh token còn hạn
+  if (protectedPaths.some((path) => pathname.startsWith(path) && !accessToken && refreshToken)) {
+    const url = new URL('/logout', request.url);
+    url.searchParams.set('refreshToken', refreshToken ?? '');
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

@@ -2,6 +2,7 @@ import { HttpError } from '@/infrastructure/http/fetcher';
 import authService from '@/infrastructure/services/auth.service';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export async function POST(_request: Request) {
   const cookieStore = cookies();
@@ -13,7 +14,7 @@ export async function POST(_request: Request) {
   cookieStore.delete('refreshToken');
 
   if (!accessToken || !refreshToken) {
-    return Response.json(
+    return NextResponse.json(
       {
         message: 'Không nhận được accessToken hoặc refreshToken từ client'
       },
@@ -27,16 +28,16 @@ export async function POST(_request: Request) {
       refreshToken
     });
 
-    return Response.json(result.payload);
+    return NextResponse.json(result.payload);
   } catch (error) {
     handleErrorApi({ error, duration: 5000 });
     if (error instanceof HttpError) {
-      return Response.json(error.message, {
+      return NextResponse.json(error.message, {
         // status: error.status,
         status: 200
       });
     } else {
-      return Response.json({
+      return NextResponse.json({
         status: 200,
         message: 'Lỗi gì đó từ server'
       });
