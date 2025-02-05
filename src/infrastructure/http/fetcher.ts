@@ -123,6 +123,8 @@ const request = async <Response>(
           }
         }
       } else {
+        // Đây là trường hợp accessToken còn hạn
+        // Và chúng ta gọi API ở Next server (server route handler, server components) đến server backend
         const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1];
         redirect(`/logout?accessToken=${accessToken}`);
       }

@@ -30,7 +30,7 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   const decodedRefreshToken = decodeToken(refreshToken);
   // Thời điểm hết hạn của token là tính theo epoch time (s)
   // Còn khi các bạn dùng cú pháp new Date().getTime() thì nó sẽ trả về epoch time (ms)
-  const now = new Date().getTime() / 1000 - 1;
+  const now = Math.round(new Date().getTime() / 1000);
   // trường hợp refresh token hết hạn thì cho logout
   if (decodedRefreshToken.exp <= now) {
     removeTokensFromLocalStorage();
@@ -40,7 +40,10 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   // thì mình sẽ kiểm tra còn 1/3 thời gian (3s) thì mình sẽ cho refresh token lại
   // Thời gian còn lại sẽ tính dựa trên công thức: decodedAccessToken.exp - now
   // Thời gian hết hạn của access token dựa trên công thức: decodedAccessToken.exp - decodedAccessToken.iat
-  if (decodedAccessToken.exp - now < (decodedAccessToken.exp - decodedAccessToken.iat) / 3) {
+  const timeRemaining = decodedAccessToken.exp - now;
+  const timeExpired = decodedAccessToken.exp - decodedAccessToken.iat;
+
+  if (timeRemaining < timeExpired / 3) {
     // Gọi API refresh token
     try {
       const role = decodedRefreshToken.role;
@@ -50,14 +53,9 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
         setAccessTokenToLocalStorage(res.payload.data.accessToken);
         setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
       }
-
-      if (param?.onSuccess) {
-        param?.onSuccess();
-      }
+      param?.onSuccess?.();
     } catch (error) {
-      if (param?.onError) {
-        param.onError();
-      }
+      param?.onError?.();
     }
   }
 };

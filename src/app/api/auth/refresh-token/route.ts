@@ -1,4 +1,3 @@
-import { LoginBodyType } from '@/domain/schemas/auth.schema';
 import { HttpError } from '@/infrastructure/http/fetcher';
 import authService from '@/infrastructure/services/auth.service';
 import { decodeToken } from '@/libs/utils/decode-token';
@@ -6,12 +5,21 @@ import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  const body = (await request.json()) as LoginBodyType;
+export async function POST() {
   const cookieStore = cookies();
+  const currentRefreshToken = cookieStore.get('refreshToken')?.value;
+
+  if (!currentRefreshToken) {
+    return NextResponse.json(
+      {
+        message: 'Không nhận được accessToken hoặc refreshToken từ client'
+      },
+      { status: 401 }
+    );
+  }
 
   try {
-    const { payload } = await authService.sLogin(body);
+    const { payload } = await authService.sRefreshToken({ refreshToken: currentRefreshToken });
     const { accessToken, refreshToken } = payload.data;
 
     const decodedAccessToken = decodeToken(accessToken);

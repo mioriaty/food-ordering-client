@@ -13,6 +13,14 @@ const meService = {
     const response = await http.get<AccountResType>(`${prefix}/me`);
     return response;
   },
+  sGetMe: async (accessToken: string) => {
+    const response = await http.get<AccountResType>(`${prefix}/me`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    return response;
+  },
   updateMe: async (data: UpdateMeBodyType) => {
     const response = await http.put<AccountResType>(`${prefix}/me`, data);
     return response;
