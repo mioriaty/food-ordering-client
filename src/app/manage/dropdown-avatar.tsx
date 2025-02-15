@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/contexts/auth-context';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { useMeQuery } from '@/infrastructure/queries/useMe';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
@@ -21,12 +22,14 @@ export default function DropdownAvatar() {
   const account = data?.payload.data;
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
+  const { setIsAuth } = useAuthContext();
 
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;
 
     try {
       await logoutMutation.mutateAsync();
+      setIsAuth(false);
       router.push('/');
     } catch (error) {
       const _error = error as Error;
