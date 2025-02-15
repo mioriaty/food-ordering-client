@@ -18,6 +18,7 @@ export const removeTokensFromLocalStorage = () => {
     localStorage.removeItem('refreshToken');
   }
 };
+
 export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuccess?: () => void }) => {
   // Không nên đưa logic lấy access và refresh token ra khỏi cái function `checkAndRefreshToken`
   // Vì để mỗi lần mà checkAndRefreshToken() được gọi thì chúng ta se có một access và refresh token mới
@@ -34,7 +35,8 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   // trường hợp refresh token hết hạn thì cho logout
   if (decodedRefreshToken.exp <= now) {
     removeTokensFromLocalStorage();
-    return param?.onError && param.onError();
+    param?.onError?.();
+    return;
   }
   // Ví dụ access token của chúng ta có thời gian hết hạn là 10s
   // thì mình sẽ kiểm tra còn 1/3 thời gian (3s) thì mình sẽ cho refresh token lại

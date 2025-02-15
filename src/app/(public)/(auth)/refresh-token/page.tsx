@@ -4,7 +4,7 @@ import { checkAndRefreshToken, getRefreshTokenFromLocalStorage } from '@/libs/ut
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-// TODO: Trường hợp lâu ngày không vào website thì access token hết hạn
+// WHY: Trường hợp lâu ngày không vào website thì access token hết hạn
 export default function RefreshTokenPage() {
   const router = useRouter();
   const searchParams = useSearchParams();

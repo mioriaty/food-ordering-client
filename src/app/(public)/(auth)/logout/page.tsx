@@ -15,23 +15,26 @@ export default function LogoutPage() {
 
   useEffect(() => {
     // Kiểm tra nếu ref.current đã có giá trị thì return để tránh gọi logout nhiều lần
-    if (
-      ref.current ||
-      (refreshTokenFromUrl && refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()) ||
-      (accessTokenFromUrl && accessTokenFromUrl !== getAccessTokenFromLocalStorage())
-    ) {
-      return;
+    const currentRefreshToken = getRefreshTokenFromLocalStorage();
+    const currentAccessToken = getAccessTokenFromLocalStorage();
+    const matchAccessToken = accessTokenFromUrl && accessTokenFromUrl === currentAccessToken;
+    const matchRefreshToken = refreshTokenFromUrl && refreshTokenFromUrl === currentRefreshToken;
+
+    const shouldLogin = !ref.current && (matchRefreshToken || matchAccessToken);
+
+    if (shouldLogin) {
+      ref.current = mutateAsync;
+
+      mutateAsync().then(() => {
+        setTimeout(() => {
+          ref.current = null;
+        }, 1000);
+
+        router.push('/login');
+      });
+    } else {
+      router.push('/');
     }
-
-    ref.current = mutateAsync;
-
-    mutateAsync().then(() => {
-      setTimeout(() => {
-        ref.current = null;
-      }, 1000);
-
-      router.push('/login');
-    });
   }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl]);
 
   return (

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/contexts/auth-context';
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
 import { LoadingButton } from '@/libs/components/loading-button';
@@ -11,7 +12,8 @@ import { Label } from '@/libs/components/ui/label';
 import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function LoginForm() {
@@ -24,6 +26,16 @@ export default function LoginForm() {
   });
   const loginMutation = useLoginMutation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const clearTokens = searchParams.get('clearTokens');
+  const { setIsAuth } = useAuthContext();
+
+  useEffect(() => {
+    // WHY: Xử lý trường hợp lâu ngày vào web thì refresh token hết hạn => redirect về trang login và xoá tất cả tokens
+    if (clearTokens) {
+      setIsAuth(false);
+    }
+  }, [clearTokens, setIsAuth]);
 
   const handleSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;

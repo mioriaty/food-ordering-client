@@ -1,7 +1,7 @@
 'use client';
 
 import { checkAndRefreshToken } from '@/libs/utils/local-authentication';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 // Những page không check refresh token
@@ -14,9 +14,10 @@ const UNAUTHENTICATED_PATHS = [
   // '/reset-password'
 ];
 
-// TODO: Trường hợp đang dùng thì access token hết hạn
+// WHY: Trường hợp đang dùng thì access token hết hạn
 export const RefreshToken = () => {
   const pathName = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathName)) return;
@@ -24,12 +25,18 @@ export const RefreshToken = () => {
     // Timeout interval phải bé hơn thời gian hết hạn của access token
     // Ví dụ thời gian hết hạn access token là 10s, thì 1s ra sẽ check 1 lần
     const TIMEOUT_TIME = 1000;
-    checkAndRefreshToken();
+    checkAndRefreshToken({
+      onError() {
+        clearInterval(interval);
+        router.push('/login');
+      }
+    });
 
     interval = setInterval(() => {
       checkAndRefreshToken({
         onError() {
           clearInterval(interval);
+          router.push('/login');
         }
       });
     }, TIMEOUT_TIME);
@@ -37,7 +44,7 @@ export const RefreshToken = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [pathName]);
+  }, [pathName, router]);
 
   return null;
 };

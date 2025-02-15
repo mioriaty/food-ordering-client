@@ -14,6 +14,7 @@ export function middleware(request: NextRequest) {
   // Chưa login thì chuyển hướng về trang login
   if (protectedPaths.some((path) => pathname.startsWith(path) && !refreshToken)) {
     const url = new URL('/login', request.url);
+    url.searchParams.set('clearTokens', 'true');
     return NextResponse.redirect(url);
   }
 
