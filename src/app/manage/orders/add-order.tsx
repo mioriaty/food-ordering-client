@@ -35,7 +35,7 @@ export default function AddOrder() {
   const [selectedGuest, setSelectedGuest] = useState<GetListGuestsResType['data'][0] | null>(null);
   const [isNewGuest, setIsNewGuest] = useState(true);
   const [orders, setOrders] = useState<CreateOrdersBodyType['orders']>([]);
-  const dishes: DishListResType['data'] = [];
+  const dishes = useMemo<DishListResType['data']>(() => [], []);
 
   const totalPrice = useMemo(() => {
     return dishes.reduce((result, dish) => {
@@ -52,8 +52,8 @@ export default function AddOrder() {
       tableNumber: 0
     }
   });
-  const name = form.watch('name');
-  const tableNumber = form.watch('tableNumber');
+  // const name = form.watch('name');
+  // const tableNumber = form.watch('tableNumber');
 
   const handleQuantityChange = (dishId: number, quantity: number) => {
     setOrders((prevOrders) => {

@@ -58,15 +58,14 @@ const fakeOrderDetail = {
 
 export default function EditOrder({
   id,
-  setId,
-  onSubmitSuccess
+  setId
 }: {
   id?: number | undefined;
   setId: (value: number | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
   const [selectedDish, setSelectedDish] = useState<DishListResType['data'][0]>(fakeOrderDetail.dishSnapshot as any);
-  const orderDetail = fakeOrderDetail;
+  // const orderDetail = fakeOrderDetail;
   const form = useForm<UpdateOrderBodyType>({
     resolver: zodResolver(UpdateOrderBody),
     defaultValues: {
@@ -76,7 +75,7 @@ export default function EditOrder({
     }
   });
 
-  const onSubmit = async (values: UpdateOrderBodyType) => {};
+  const onSubmit = async (_values: UpdateOrderBodyType) => {};
 
   const reset = () => {
     setId(undefined);

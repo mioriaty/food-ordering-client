@@ -25,8 +25,7 @@ import { useForm } from 'react-hook-form';
 
 export default function EditDish({
   id,
-  setId,
-  onSubmitSuccess
+  setId
 }: {
   id?: number | undefined;
   setId: (value: number | undefined) => void;
