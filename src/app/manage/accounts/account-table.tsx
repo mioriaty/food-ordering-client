@@ -46,14 +46,14 @@ import EditEmployee from '@/app/manage/accounts/edit-employee';
 type AccountItem = AccountListResType['data'][0];
 
 const AccountTableContext = createContext<{
-  setEmployeeIdEdit: (value: number) => void;
   employeeIdEdit: number | undefined;
   employeeDelete: AccountItem | null;
+  setEmployeeIdEdit: (value: number) => void;
   setEmployeeDelete: (value: AccountItem | null) => void;
 }>({
-  setEmployeeIdEdit: (_value: number | undefined) => {},
   employeeIdEdit: undefined,
   employeeDelete: null,
+  setEmployeeIdEdit: (_value: number | undefined) => {},
   setEmployeeDelete: (_value: AccountItem | null) => {}
 });
 

@@ -1,6 +1,8 @@
 'use client';
 
 import { CreateEmployeeAccountBody, CreateEmployeeAccountBodyType } from '@/domain/schemas/account.schema';
+import { useCreateAccountMutation } from '@/infrastructure/queries/useMe';
+import { useMediaMutation } from '@/infrastructure/queries/useMedia';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -15,15 +17,21 @@ import {
 import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
+import { toast } from '@/libs/components/ui/use-toast';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, Upload } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function AddEmployee() {
+  const createAccountMutation = useCreateAccountMutation();
+  const uploadMediaMutation = useMediaMutation();
+
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
+
   const form = useForm<CreateEmployeeAccountBodyType>({
     resolver: zodResolver(CreateEmployeeAccountBody),
     defaultValues: {
@@ -36,12 +44,48 @@ export default function AddEmployee() {
   });
   const avatar = form.watch('avatar');
   const name = form.watch('name');
+
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file);
     }
     return avatar;
   }, [file, avatar]);
+
+  const handleSubmit = async (data: CreateEmployeeAccountBodyType) => {
+    if (createAccountMutation.isPending || uploadMediaMutation.isPending) return;
+
+    try {
+      let body: CreateEmployeeAccountBodyType = { ...data };
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
+        const imageUrl = uploadImageRes.payload.data;
+        body = {
+          ...data,
+          avatar: imageUrl
+        };
+      }
+
+      const result = await createAccountMutation.mutateAsync(body);
+
+      toast({
+        description: result.payload.message,
+        variant: 'success'
+      });
+      handleReset();
+      setOpen(false);
+    } catch (error) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
+
+  const handleReset = () => {
+    form.reset();
+    setFile(null);
+  };
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -51,13 +95,23 @@ export default function AddEmployee() {
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Tạo tài khoản</span>
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[600px] max-h-screen overflow-auto">
         <DialogHeader>
           <DialogTitle>Tạo tài khoản</DialogTitle>
           <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
-          <form noValidate className="grid auto-rows-max items-start gap-4 md:gap-8" id="add-employee-form">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit, (e) => {
+              console.log(e);
+            })}
+            onReset={handleReset}
+            noValidate
+            className="grid auto-rows-max items-start gap-4 md:gap-8"
+            id="add-employee-form"
+          >
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
