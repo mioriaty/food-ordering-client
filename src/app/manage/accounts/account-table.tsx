@@ -1,17 +1,8 @@
 'use client';
 
 import { AccountListResType, AccountType } from '@/domain/schemas/account.schema';
+import { useGetAccountListQuery } from '@/infrastructure/queries/useMe';
 import AutoPagination from '@/libs/components/auto-pagination';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/libs/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -41,6 +32,7 @@ import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import AddEmployee from '@/app/manage/accounts/add-employee';
+import { AlertDialogDeleteAccount } from '@/app/manage/accounts/delete-employee';
 import EditEmployee from '@/app/manage/accounts/edit-employee';
 
 type AccountItem = AccountListResType['data'][0];
@@ -63,12 +55,17 @@ export const columns: ColumnDef<AccountType>[] = [
     header: 'ID'
   },
   {
+    accessorKey: 'role',
+    header: 'Role',
+    cell: ({ row }) => <div className="capitalize">{row.getValue('role')}</div>
+  },
+  {
     accessorKey: 'avatar',
     header: 'Avatar',
     cell: ({ row }) => (
       <div>
-        <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
-          <AvatarImage src={row.getValue('avatar')} />
+        <Avatar className="aspect-square w-[50px] h-[50px] rounded-md object-cover">
+          <AvatarImage className="object-cover" src={row.getValue('avatar')} />
           <AvatarFallback className="rounded-none">{row.original.name}</AvatarFallback>
         </Avatar>
       </div>
@@ -76,7 +73,7 @@ export const columns: ColumnDef<AccountType>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Tên',
+    header: 'Name',
     cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>
   },
   {
@@ -123,40 +120,9 @@ export const columns: ColumnDef<AccountType>[] = [
   }
 ];
 
-function AlertDialogDeleteAccount({
-  employeeDelete,
-  setEmployeeDelete
-}: {
-  employeeDelete: AccountItem | null;
-  setEmployeeDelete: (value: AccountItem | null) => void;
-}) {
-  return (
-    <AlertDialog
-      open={Boolean(employeeDelete)}
-      onOpenChange={(value) => {
-        if (!value) {
-          setEmployeeDelete(null);
-        }
-      }}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Xóa nhân viên?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Tài khoản <span className="bg-foreground text-primary-foreground rounded px-1">{employeeDelete?.name}</span>{' '}
-            sẽ bị xóa vĩnh viễn
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 // Số lượng item trên 1 trang
 const PAGE_SIZE = 10;
+
 export default function AccountTable() {
   const searchParam = useSearchParams();
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
@@ -164,7 +130,11 @@ export default function AccountTable() {
   // const params = Object.fromEntries(searchParam.entries())
   const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>();
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null);
-  const data: any[] = [];
+
+  const accountListQuery = useGetAccountListQuery();
+
+  const data = accountListQuery.data?.payload?.data || [];
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -206,7 +176,7 @@ export default function AccountTable() {
   return (
     <AccountTableContext.Provider value={{ employeeIdEdit, setEmployeeIdEdit, employeeDelete, setEmployeeDelete }}>
       <div className="w-full">
-        <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
+        <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} />
         <AlertDialogDeleteAccount employeeDelete={employeeDelete} setEmployeeDelete={setEmployeeDelete} />
         <div className="flex items-center py-4">
           <Input

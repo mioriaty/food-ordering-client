@@ -51,7 +51,7 @@ const meService = {
     return response;
   },
   updateEmployee: async (id: number, data: UpdateEmployeeAccountBodyType) => {
-    const response = await http.put<AccountResType>(`${prefix}/${id}`, data);
+    const response = await http.put<AccountResType>(`${prefix}/detail/${id}`, data);
     return response;
   },
   deleteEmployee: async (id: number) => {
@@ -59,7 +59,7 @@ const meService = {
     return response;
   },
   getEmployee: async (id: number) => {
-    const response = await http.get<AccountResType>(`${prefix}/${id}`);
+    const response = await http.get<AccountResType>(`${prefix}/detail/${id}`);
     return response;
   },
   sGetEmployee: async (accessToken: string, id: number) => {

@@ -1,6 +1,8 @@
 'use client';
 
 import { UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/domain/schemas/account.schema';
+import { useGetAccountByIdQuery, useUpdateAccountMutation } from '@/infrastructure/queries/useMe';
+import { useMediaMutation } from '@/infrastructure/queries/useMedia';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -15,9 +17,11 @@ import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/for
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Switch } from '@/libs/components/ui/switch';
+import { toast } from '@/libs/components/ui/use-toast';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function EditEmployee({
@@ -31,6 +35,10 @@ export default function EditEmployee({
 }) {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const { data } = useGetAccountByIdQuery({ id: id as number, enabledCall: Boolean(id) });
+  const updateAccountMutation = useUpdateAccountMutation();
+  const uploadMediaMutation = useMediaMutation();
+
   const form = useForm<UpdateEmployeeAccountBodyType>({
     resolver: zodResolver(UpdateEmployeeAccountBody),
     defaultValues: {
@@ -52,12 +60,61 @@ export default function EditEmployee({
     return avatar;
   }, [file, avatar]);
 
+  useEffect(() => {
+    if (data) {
+      const { name, avatar, email } = data.payload.data;
+      form.reset({
+        name,
+        email,
+        avatar: avatar ?? undefined,
+        changePassword: form.getValues('changePassword'),
+        password: form.getValues('password'),
+        confirmPassword: form.getValues('confirmPassword')
+      });
+    }
+  }, [data, form]);
+
+  const handleSubmit = async (values: UpdateEmployeeAccountBodyType) => {
+    if (updateAccountMutation.isPending || uploadMediaMutation.isPending) return;
+
+    try {
+      let body: UpdateEmployeeAccountBodyType & { id: number } = { ...values, id: id as number };
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
+        const imageUrl = uploadImageRes.payload.data;
+        body = {
+          ...body,
+          avatar: imageUrl
+        };
+      }
+
+      const result = await updateAccountMutation.mutateAsync(body);
+
+      toast({
+        description: result.payload.message,
+        variant: 'success'
+      });
+      onSubmitSuccess?.();
+      handleReset();
+    } catch (error) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
+  const handleReset = () => {
+    form.reset();
+    setFile(null);
+    setId(undefined);
+  };
+
   return (
     <Dialog
       open={Boolean(id)}
       onOpenChange={(value) => {
         if (!value) {
-          setId(undefined);
+          handleReset();
         }
       }}
     >
@@ -67,7 +124,13 @@ export default function EditEmployee({
           <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className="grid auto-rows-max items-start gap-4 md:gap-8" id="edit-employee-form">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            onReset={handleReset}
+            noValidate
+            className="grid auto-rows-max items-start gap-4 md:gap-8"
+            id="edit-employee-form"
+          >
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
@@ -76,7 +139,7 @@ export default function EditEmployee({
                   <FormItem>
                     <div className="flex gap-2 items-start justify-start">
                       <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
-                        <AvatarImage src={previewAvatarFromFile} />
+                        <AvatarImage className="object-cover" src={previewAvatarFromFile} />
                         <AvatarFallback className="rounded-none">{name || 'Avatar'}</AvatarFallback>
                       </Avatar>
                       <input

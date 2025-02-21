@@ -36,10 +36,11 @@ export const useGetAccountListQuery = () => {
   });
 };
 
-export const useGetAccountByIdQuery = ({ id }: { id: number }) => {
+export const useGetAccountByIdQuery = ({ id, enabledCall }: { id: number; enabledCall: boolean }) => {
   return useQuery({
-    queryKey: ['account', id],
-    queryFn: () => meService.getEmployee(id)
+    queryKey: ['accounts', id],
+    queryFn: () => meService.getEmployee(id),
+    enabled: enabledCall
   });
 };
 
@@ -62,7 +63,7 @@ export const useUpdateAccountMutation = () => {
     mutationFn: ({ id, ...body }: UpdateEmployeeAccountBodyType & { id: number }) => meService.updateEmployee(id, body),
     onSuccess: () => {
       // Invalidate query to refetch data
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['accounts'], exact: true });
     }
   });
 };
