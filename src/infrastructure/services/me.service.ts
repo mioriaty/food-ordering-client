@@ -55,7 +55,7 @@ const meService = {
     return response;
   },
   deleteEmployee: async (id: number) => {
-    const response = await http.delete<AccountResType>(`${prefix}/${id}`);
+    const response = await http.delete<AccountResType>(`${prefix}/detail/${id}`);
     return response;
   },
   getEmployee: async (id: number) => {

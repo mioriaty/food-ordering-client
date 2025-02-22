@@ -50,7 +50,10 @@ export const useCreateAccountMutation = () => {
   return useMutation({
     mutationFn: meService.createEmployee,
     onSuccess: () => {
-      // Invalidate query to refetch data
+      // Khi tạo tài khoản mới thành công:
+      // 1. Đánh dấu tất cả queries có key là ['accounts'] là đã cũ (stale)
+      // 2. Tự động gọi API để lấy lại danh sách tài khoản mới nhất
+      // 3. Cập nhật giao diện với dữ liệu mới mà không cần reload trang
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
     }
   });
@@ -62,7 +65,10 @@ export const useUpdateAccountMutation = () => {
   return useMutation({
     mutationFn: ({ id, ...body }: UpdateEmployeeAccountBodyType & { id: number }) => meService.updateEmployee(id, body),
     onSuccess: () => {
-      // Invalidate query to refetch data
+      // Khi cập nhật tài khoản thành công:
+      // 1. Đánh dấu tất cả queries có key là ['accounts'] là đã cũ (stale)
+      // 2. Tự động gọi API để lấy lại danh sách tài khoản mới nhất
+      // 3. Cập nhật giao diện với dữ liệu mới mà không cần reload trang
       queryClient.invalidateQueries({ queryKey: ['accounts'], exact: true });
     }
   });
@@ -74,6 +80,10 @@ export const useDeleteAccountMutation = () => {
   return useMutation({
     mutationFn: meService.deleteEmployee,
     onSuccess: () => {
+      // Khi xóa tài khoản thành công:
+      // 1. Đánh dấu tất cả queries có key là ['accounts'] là đã cũ (stale)
+      // 2. Tự động gọi API để lấy lại danh sách tài khoản mới nhất
+      // 3. Cập nhật giao diện với dữ liệu mới mà không cần reload trang
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
     }
   });

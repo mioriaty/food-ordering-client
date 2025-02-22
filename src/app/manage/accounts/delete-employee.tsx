@@ -1,4 +1,5 @@
 import { AccountListResType } from '@/domain/schemas/account.schema';
+import { useDeleteAccountMutation } from '@/infrastructure/queries/useMe';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,6 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/libs/components/ui/alert-dialog';
+import { toast } from '@/libs/components/ui/use-toast';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 
 type AccountItem = AccountListResType['data'][0];
 
@@ -19,6 +22,25 @@ export function AlertDialogDeleteAccount({
   employeeDelete: AccountItem | null;
   setEmployeeDelete: (value: AccountItem | null) => void;
 }) {
+  const deleteAccount = useDeleteAccountMutation();
+
+  const handleDelete = async () => {
+    if (!employeeDelete) return;
+
+    if (deleteAccount.isPending) return;
+
+    try {
+      const response = await deleteAccount.mutateAsync(employeeDelete?.id);
+      toast({
+        description: response.payload.message,
+        variant: 'success'
+      });
+      setEmployeeDelete(null);
+    } catch (error) {
+      handleErrorApi({ error });
+    }
+  };
+
   return (
     <AlertDialog
       open={Boolean(employeeDelete)}
@@ -38,7 +60,9 @@ export function AlertDialogDeleteAccount({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction disabled={deleteAccount.isPending} onClick={handleDelete}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
