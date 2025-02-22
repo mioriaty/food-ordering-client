@@ -2,16 +2,6 @@
 
 import { DishListResType } from '@/domain/schemas/dish.schema';
 import AutoPagination from '@/libs/components/auto-pagination';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/libs/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -43,6 +33,7 @@ import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import AddDish from '@/app/manage/dishes/add-dish';
+import { AlertDialogDeleteDish } from '@/app/manage/dishes/delete-dish';
 import EditDish from '@/app/manage/dishes/edit-dish';
 
 type DishItem = DishListResType['data'][0];
@@ -130,38 +121,6 @@ export const columns: ColumnDef<DishItem>[] = [
   }
 ];
 
-function AlertDialogDeleteDish({
-  dishDelete,
-  setDishDelete
-}: {
-  dishDelete: DishItem | null;
-  setDishDelete: (value: DishItem | null) => void;
-}) {
-  return (
-    <AlertDialog
-      open={Boolean(dishDelete)}
-      onOpenChange={(value) => {
-        if (!value) {
-          setDishDelete(null);
-        }
-      }}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Xóa món ăn?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Món <span className="bg-foreground text-primary-foreground rounded px-1">{dishDelete?.name}</span> sẽ bị xóa
-            vĩnh viễn
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 // Số lượng item trên 1 trang
 const PAGE_SIZE = 10;
 export default function DishTable() {

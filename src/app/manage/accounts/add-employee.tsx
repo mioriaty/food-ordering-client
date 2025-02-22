@@ -3,6 +3,7 @@
 import { CreateEmployeeAccountBody, CreateEmployeeAccountBodyType } from '@/domain/schemas/account.schema';
 import { useCreateAccountMutation } from '@/infrastructure/queries/useMe';
 import { useMediaMutation } from '@/infrastructure/queries/useMedia';
+import { LoadingButton } from '@/libs/components/loading-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -88,7 +89,15 @@ export default function AddEmployee() {
   };
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog
+      onOpenChange={(value) => {
+        if (!value) {
+          handleReset();
+        }
+        setOpen(value);
+      }}
+      open={open}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="h-7 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
@@ -213,9 +222,9 @@ export default function AddEmployee() {
           </form>
         </Form>
         <DialogFooter>
-          <Button type="submit" form="add-employee-form">
+          <LoadingButton isLoading={createAccountMutation.isPending} type="submit" form="add-employee-form">
             Thêm
-          </Button>
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

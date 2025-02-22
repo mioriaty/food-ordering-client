@@ -1,6 +1,9 @@
 'use client';
 
 import { CreateDishBody, CreateDishBodyType } from '@/domain/schemas/dish.schema';
+import { useCreateDishMutation } from '@/infrastructure/queries/useDish';
+import { useMediaMutation } from '@/infrastructure/queries/useMedia';
+import { LoadingButton } from '@/libs/components/loading-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {
@@ -16,14 +19,19 @@ import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 import { Textarea } from '@/libs/components/ui/textarea';
+import { toast } from '@/libs/components/ui/use-toast';
 import { DishStatus, DishStatusValues } from '@/libs/constants/type';
 import { getVietnameseDishStatus } from '@/libs/utils/get-vn-dish-status';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, Upload } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function AddDish() {
+  const createDishMutation = useCreateDishMutation();
+  const uploadMediaMutation = useMediaMutation();
+
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -33,7 +41,7 @@ export default function AddDish() {
       name: '',
       description: '',
       price: 0,
-      image: '',
+      image: undefined,
       status: DishStatus.Unavailable
     }
   });
@@ -46,8 +54,51 @@ export default function AddDish() {
     return image;
   }, [file, image]);
 
+  const handleSubmit = async (data: CreateDishBodyType) => {
+    if (createDishMutation.isPending || uploadMediaMutation.isPending) return;
+
+    try {
+      let body: CreateDishBodyType = { ...data };
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
+        const imageUrl = uploadImageRes.payload.data;
+        body = {
+          ...data,
+          image: imageUrl
+        };
+      }
+
+      const result = await createDishMutation.mutateAsync(body);
+
+      toast({
+        description: result.payload.message,
+        variant: 'success'
+      });
+      handleReset();
+      setOpen(false);
+    } catch (error) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
+
+  const handleReset = () => {
+    form.reset();
+    setFile(null);
+  };
+
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog
+      onOpenChange={(value) => {
+        if (!value) {
+          handleReset();
+        }
+        setOpen(value);
+      }}
+      open={open}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="h-7 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
@@ -59,7 +110,15 @@ export default function AddDish() {
           <DialogTitle>Thêm món ăn</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className="grid auto-rows-max items-start gap-4 md:gap-8" id="add-dish-form">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit, (e) => {
+              console.log(e);
+            })}
+            onReset={handleReset}
+            noValidate
+            className="grid auto-rows-max items-start gap-4 md:gap-8"
+            id="add-dish-form"
+          >
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
@@ -69,7 +128,7 @@ export default function AddDish() {
                     <div className="flex gap-2 items-start justify-start">
                       <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
                         <AvatarImage src={previewAvatarFromFile} />
-                        <AvatarFallback className="rounded-none">{name || 'Avatar'}</AvatarFallback>
+                        <AvatarFallback className="rounded-none">{name || 'Ảnh món ăn'}</AvatarFallback>
                       </Avatar>
                       <input
                         type="file"
@@ -175,9 +234,9 @@ export default function AddDish() {
           </form>
         </Form>
         <DialogFooter>
-          <Button type="submit" form="add-dish-form">
+          <LoadingButton isLoading={createDishMutation.isPending} type="submit" form="add-dish-form">
             Thêm
-          </Button>
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

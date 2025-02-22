@@ -61,14 +61,6 @@ const meService = {
   getEmployee: async (id: number) => {
     const response = await http.get<AccountResType>(`${prefix}/detail/${id}`);
     return response;
-  },
-  sGetEmployee: async (accessToken: string, id: number) => {
-    const response = await http.get<AccountResType>(`${prefix}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-    return response;
   }
 };
 
