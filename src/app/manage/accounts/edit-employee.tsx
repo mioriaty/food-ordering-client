@@ -103,6 +103,7 @@ export default function EditEmployee({
       handleErrorApi({ error, setError: form.setError });
     }
   };
+
   const handleReset = () => {
     form.reset();
     setFile(null);

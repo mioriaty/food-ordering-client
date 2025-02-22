@@ -1,6 +1,7 @@
 'use client';
 
 import { DishListResType } from '@/domain/schemas/dish.schema';
+import { useGetListDishQuery } from '@/infrastructure/queries/useDish';
 import AutoPagination from '@/libs/components/auto-pagination';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
@@ -44,10 +45,10 @@ const DishTableContext = createContext<{
   dishDelete: DishItem | null;
   setDishDelete: (value: DishItem | null) => void;
 }>({
-  setDishIdEdit: (value: number | undefined) => {},
+  setDishIdEdit: (_value: number | undefined) => {},
   dishIdEdit: undefined,
   dishDelete: null,
-  setDishDelete: (value: DishItem | null) => {}
+  setDishDelete: (_value: DishItem | null) => {}
 });
 
 export const columns: ColumnDef<DishItem>[] = [
@@ -60,8 +61,8 @@ export const columns: ColumnDef<DishItem>[] = [
     header: 'Ảnh',
     cell: ({ row }) => (
       <div>
-        <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
-          <AvatarImage src={row.getValue('image')} />
+        <Avatar className="aspect-square w-[50px] h-[50px] rounded-md object-cover">
+          <AvatarImage className="object-cover" src={row.getValue('image')} />
           <AvatarFallback className="rounded-none">{row.original.name}</AvatarFallback>
         </Avatar>
       </div>
@@ -129,7 +130,11 @@ export default function DishTable() {
   const pageIndex = page - 1;
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>();
   const [dishDelete, setDishDelete] = useState<DishItem | null>(null);
-  const data: any[] = [];
+
+  const dishListQuery = useGetListDishQuery();
+
+  const data: DishListResType['data'] = dishListQuery.data?.payload.data || [];
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

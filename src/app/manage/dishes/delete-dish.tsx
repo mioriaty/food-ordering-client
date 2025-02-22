@@ -1,4 +1,5 @@
 import { DishListResType } from '@/domain/schemas/dish.schema';
+import { useDeleteDishMutation } from '@/infrastructure/queries/useDish';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,6 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/libs/components/ui/alert-dialog';
+import { toast } from '@/libs/components/ui/use-toast';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 
 type DishItem = DishListResType['data'][0];
 
@@ -19,6 +22,25 @@ export function AlertDialogDeleteDish({
   dishDelete: DishItem | null;
   setDishDelete: (value: DishItem | null) => void;
 }) {
+  const deleteDish = useDeleteDishMutation();
+
+  const handleDelete = async () => {
+    if (!dishDelete) return;
+
+    if (deleteDish.isPending) return;
+
+    try {
+      const response = await deleteDish.mutateAsync(dishDelete.id);
+      toast({
+        description: response.payload.message,
+        variant: 'success'
+      });
+      setDishDelete(null);
+    } catch (error) {
+      handleErrorApi({ error });
+    }
+  };
+
   return (
     <AlertDialog
       open={Boolean(dishDelete)}
@@ -38,7 +60,7 @@ export function AlertDialogDeleteDish({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
