@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { Suspense } from 'react';
 
-import DishTable from '@/app/manage/tables/table-table';
+import TableTable from '@/app/manage/tables/table-table';
 
 export default function TablesPage() {
   return (
@@ -14,7 +14,7 @@ export default function TablesPage() {
           </CardHeader>
           <CardContent>
             <Suspense>
-              <DishTable />
+              <TableTable />
             </Suspense>
           </CardContent>
         </Card>

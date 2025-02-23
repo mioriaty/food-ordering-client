@@ -66,7 +66,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
         </div>
       );
     },
-    filterFn: (row, columnId, filterValue: string) => {
+    filterFn: (row, _columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
       return simpleMatchText(row.original.guest?.name ?? 'Đã bị xóa', String(filterValue));
     }

@@ -15,9 +15,7 @@ import {
 } from '@/libs/components/ui/dropdown-menu';
 import { Input } from '@/libs/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
-import { getTableLink } from '@/libs/utils/get-table-link';
 import { getVietnameseTableStatus } from '@/libs/utils/get-vn-table-status';
-import { simpleMatchText } from '@/libs/utils/remove-accents';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,

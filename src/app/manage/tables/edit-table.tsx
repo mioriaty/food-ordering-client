@@ -4,7 +4,6 @@ import { UpdateTableBody, UpdateTableBodyType } from '@/domain/schemas/table.sch
 import { useGetTableByIdQuery, useUpdateTableMutation } from '@/infrastructure/queries/useTable';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { QRCodeTable } from '@/libs/components/qr-code-table';
-import { Button } from '@/libs/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/libs/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
 import { Input } from '@/libs/components/ui/input';

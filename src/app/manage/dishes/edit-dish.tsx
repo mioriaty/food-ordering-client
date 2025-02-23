@@ -3,9 +3,9 @@
 import { UpdateDishBody, UpdateDishBodyType } from '@/domain/schemas/dish.schema';
 import { useGetDishByIdQuery, useUpdateDishMutation } from '@/infrastructure/queries/useDish';
 import { useMediaMutation } from '@/infrastructure/queries/useMedia';
+import revalidateApiRequest from '@/infrastructure/services/revalidate.request';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
-import { Button } from '@/libs/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -94,6 +94,7 @@ export default function EditDish({
       }
 
       const result = await updateDishMutation.mutateAsync(body);
+      await revalidateApiRequest('dishes');
 
       toast({
         description: result.payload.message,

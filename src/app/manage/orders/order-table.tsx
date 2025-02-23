@@ -33,9 +33,9 @@ import orderTableColumns from '@/app/manage/orders/order-table-columns';
 import { useOrderService } from '@/app/manage/orders/order.service';
 
 export const OrderTableContext = createContext({
-  setOrderIdEdit: (value: number | undefined) => {},
+  setOrderIdEdit: (_value: number | undefined) => {},
   orderIdEdit: undefined as number | undefined,
-  changeStatus: (payload: {
+  changeStatus: (_payload: {
     orderId: number;
     dishId: number;
     status: (typeof OrderStatusValues)[number];
@@ -77,7 +77,7 @@ export default function OrderTable() {
 
   const { statics, orderObjectByGuestId, servingGuestByTableNumber } = useOrderService(orderList);
 
-  const changeStatus = async (body: {
+  const changeStatus = async (_body: {
     orderId: number;
     dishId: number;
     status: (typeof OrderStatusValues)[number];

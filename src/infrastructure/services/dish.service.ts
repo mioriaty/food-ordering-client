@@ -4,7 +4,12 @@ import http from '@/infrastructure/http/fetcher';
 const prefix = '/dishes';
 
 const dishService = {
-  list: () => http.get<DishListResType>(prefix),
+  // Note: Nextjs 15 thì mặc định fetch sẽ là { cache: 'no-store' } (dynamic rendering page)
+  // Hiện tại nextjs 14 fetch sẽ là { cache: 'force-cache' } (static rendering page)
+  list: () =>
+    http.get<DishListResType>(prefix, {
+      next: { tags: ['dishes'] }
+    }),
   getOne: (id: number) => http.get<DishResType>(`${prefix}/${id}`),
   create: (data: CreateDishBodyType) => http.post<DishResType>(prefix, data),
   update: (id: number, data: UpdateDishBodyType) => http.put<DishResType>(`${prefix}/${id}`, data),

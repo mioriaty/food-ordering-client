@@ -32,7 +32,7 @@ export const columns: ColumnDef<GuestItem>[] = [
         {row.getValue('name')} | (#{row.original.id})
       </div>
     ),
-    filterFn: (row, columnId, filterValue: string) => {
+    filterFn: (row, _columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
       return simpleMatchText(row.original.name + String(row.original.id), String(filterValue));
     }
@@ -41,7 +41,7 @@ export const columns: ColumnDef<GuestItem>[] = [
     accessorKey: 'tableNumber',
     header: 'Số bàn',
     cell: ({ row }) => <div className="capitalize">{row.getValue('tableNumber')}</div>,
-    filterFn: (row, columnId, filterValue: string) => {
+    filterFn: (row, _columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
       return simpleMatchText(String(row.original.tableNumber), String(filterValue));
     }

@@ -71,7 +71,7 @@ export const columns: ColumnDef<DishItem>[] = [
         <span>{row.original.name}</span>
       </div>
     ),
-    filterFn: (row, columnId, filterValue: string) => {
+    filterFn: (row, _columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
       return simpleMatchText(String(row.original.name), String(filterValue));
     }

@@ -29,7 +29,7 @@ export const columns: ColumnDef<TableItem>[] = [
     accessorKey: 'number',
     header: 'Số bàn',
     cell: ({ row }) => <div className="capitalize">{row.getValue('number')}</div>,
-    filterFn: (row, columnId, filterValue: string) => {
+    filterFn: (row, _columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
       return simpleMatchText(String(row.original.number), String(filterValue));
     }

@@ -1,51 +1,11 @@
-'use client';
+import { Suspense } from 'react';
 
-import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/libs/utils/local-authentication';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { LogoutPageContent } from '@/app/(public)/(auth)/logout/logout-page-content';
 
 export default function LogoutPage() {
-  const { mutateAsync } = useLogoutMutation();
-  const router = useRouter();
-  const ref = useRef<typeof mutateAsync | null>(null);
-  const searchParams = useSearchParams();
-  const refreshTokenFromUrl = searchParams.get('refreshToken');
-  const accessTokenFromUrl = searchParams.get('accessToken');
-
-  useEffect(() => {
-    // Kiểm tra nếu ref.current đã có giá trị thì return để tránh gọi logout nhiều lần
-    const currentRefreshToken = getRefreshTokenFromLocalStorage();
-    const currentAccessToken = getAccessTokenFromLocalStorage();
-    const matchAccessToken = accessTokenFromUrl && accessTokenFromUrl === currentAccessToken;
-    const matchRefreshToken = refreshTokenFromUrl && refreshTokenFromUrl === currentRefreshToken;
-
-    const shouldLogin = !ref.current && (matchRefreshToken || matchAccessToken);
-
-    if (shouldLogin) {
-      ref.current = mutateAsync;
-
-      mutateAsync().then(() => {
-        setTimeout(() => {
-          ref.current = null;
-        }, 1000);
-
-        router.push('/login');
-      });
-    } else {
-      router.push('/');
-    }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl]);
-
   return (
-    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-      <div className="mx-auto grid w-full flex-1 auto-rows-max gap-4">
-        <div className="flex items-center gap-4">
-          <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-            Logging out...
-          </h1>
-        </div>
-      </div>
-    </main>
+    <Suspense>
+      <LogoutPageContent />
+    </Suspense>
   );
 }
