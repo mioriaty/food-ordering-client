@@ -65,16 +65,15 @@ export default function EditDish({
   }, [file, image]);
 
   useEffect(() => {
-    if (data) {
-      const { image, name, price, status, description } = data.payload.data;
-      form.reset({
-        name,
-        description,
-        price,
-        image: image ?? undefined,
-        status
-      });
-    }
+    if (!data) return;
+    const { image, name, price, status, description } = data.payload.data;
+    form.reset({
+      name,
+      description,
+      price,
+      image: image ?? undefined,
+      status
+    });
   }, [data, form]);
 
   const handleSubmit = async (values: UpdateDishBodyType) => {

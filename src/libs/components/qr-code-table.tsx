@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 export const QRCodeTable = ({
   token,
   tableNumber,
-  width = 250
+  width = 200
 }: {
   token: string;
   tableNumber: number;
@@ -16,16 +16,16 @@ export const QRCodeTable = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const qrCanvas = document.createElement('canvas');
-    // const canvas = canvasRef.current!
+
     const canvas = canvasRef.current!;
     canvas.height = width + 70;
     canvas.width = width;
-    // const qrContext = qrCanvas.getContext('2d')!
+
     const canvasContext = canvas.getContext('2d')!;
     canvasContext.fillStyle = '#fff';
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-    canvasContext.font = '20px Arial';
+    canvasContext.font = '16px Arial';
     canvasContext.textAlign = 'center';
     canvasContext.fillStyle = '#000';
     canvasContext.fillText(`Bàn số ${tableNumber}`, width / 2, width + 20);

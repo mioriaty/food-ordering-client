@@ -1,17 +1,9 @@
 'use client';
 
 import { TableListResType } from '@/domain/schemas/table.schema';
+import { useGetListTableQuery } from '@/infrastructure/queries/useTable';
 import AutoPagination from '@/libs/components/auto-pagination';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/libs/components/ui/alert-dialog';
+import { QRCodeTable } from '@/libs/components/qr-code-table';
 import { Button } from '@/libs/components/ui/button';
 import {
   DropdownMenu,
@@ -23,7 +15,9 @@ import {
 } from '@/libs/components/ui/dropdown-menu';
 import { Input } from '@/libs/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
+import { getTableLink } from '@/libs/utils/get-table-link';
 import { getVietnameseTableStatus } from '@/libs/utils/get-vn-table-status';
+import { simpleMatchText } from '@/libs/utils/remove-accents';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
@@ -41,6 +35,7 @@ import { useSearchParams } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import AddTable from '@/app/manage/tables/add-table';
+import { AlertDialogDeleteTable } from '@/app/manage/tables/delete-table';
 import EditTable from '@/app/manage/tables/edit-table';
 
 type TableItem = TableListResType['data'][0];
@@ -51,17 +46,22 @@ const TableTableContext = createContext<{
   tableDelete: TableItem | null;
   setTableDelete: (value: TableItem | null) => void;
 }>({
-  setTableIdEdit: (value: number | undefined) => {},
+  setTableIdEdit: (_value: number | undefined) => {},
   tableIdEdit: undefined,
   tableDelete: null,
-  setTableDelete: (value: TableItem | null) => {}
+  setTableDelete: (_value: TableItem | null) => {}
 });
 
 export const columns: ColumnDef<TableItem>[] = [
   {
     accessorKey: 'number',
     header: 'Số bàn',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('number')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('number')}</div>,
+    filterFn: (row, _id, filterValue) => {
+      if (!filterValue) return true;
+
+      return String(row.getValue('number')).includes(String(filterValue));
+    }
   },
   {
     accessorKey: 'capacity',
@@ -76,7 +76,7 @@ export const columns: ColumnDef<TableItem>[] = [
   {
     accessorKey: 'token',
     header: 'QR Code',
-    cell: ({ row }) => <div>{row.getValue('number')}</div>
+    cell: ({ row }) => <QRCodeTable token={row.getValue('token')} tableNumber={row.getValue('number')} />
   },
   {
     id: 'actions',
@@ -110,38 +110,6 @@ export const columns: ColumnDef<TableItem>[] = [
   }
 ];
 
-function AlertDialogDeleteTable({
-  tableDelete,
-  setTableDelete
-}: {
-  tableDelete: TableItem | null;
-  setTableDelete: (value: TableItem | null) => void;
-}) {
-  return (
-    <AlertDialog
-      open={Boolean(tableDelete)}
-      onOpenChange={(value) => {
-        if (!value) {
-          setTableDelete(null);
-        }
-      }}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Xóa bàn ăn?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Bàn <span className="bg-foreground text-primary-foreground rounded px-1">{tableDelete?.number}</span> sẽ bị
-            xóa vĩnh viễn
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 // Số lượng item trên 1 trang
 const PAGE_SIZE = 10;
 export default function TableTable() {
@@ -151,7 +119,11 @@ export default function TableTable() {
   // const params = Object.fromEntries(searchParam.entries())
   const [tableIdEdit, setTableIdEdit] = useState<number | undefined>();
   const [tableDelete, setTableDelete] = useState<TableItem | null>(null);
-  const data: any[] = [];
+
+  const tableDataQuery = useGetListTableQuery();
+
+  const data = tableDataQuery.data?.payload.data || [];
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
