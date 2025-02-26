@@ -28,14 +28,14 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const clearTokens = searchParams.get('clearTokens');
-  const { setIsAuth } = useAuthContext();
+  const { setRole } = useAuthContext();
 
   useEffect(() => {
     // WHY: Xử lý trường hợp lâu ngày vào web thì refresh token hết hạn => redirect về trang login và xoá tất cả tokens
     if (clearTokens) {
-      setIsAuth(false);
+      setRole(undefined);
     }
-  }, [clearTokens, setIsAuth]);
+  }, [clearTokens, setRole]);
 
   const handleSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
@@ -45,7 +45,8 @@ export default function LoginForm() {
       toast({
         description: response.payload.message
       });
-      setIsAuth(true);
+      setRole(response.payload.data.account.role);
+
       router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });

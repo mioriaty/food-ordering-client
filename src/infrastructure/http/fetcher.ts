@@ -1,5 +1,11 @@
 import envConfig from '@/configs/env.config';
 import { LoginResType } from '@/domain/schemas/auth.schema';
+import {
+  getAccessTokenFromLocalStorage,
+  removeTokensFromLocalStorage,
+  setAccessTokenToLocalStorage,
+  setRefreshTokenToLocalStorage
+} from '@/libs/utils/local-authentication';
 import { normalizePath } from '@/libs/utils/string';
 import { redirect } from 'next/navigation';
 
@@ -63,7 +69,7 @@ const request = async <Response>(
           'Content-Type': 'application/json'
         };
   if (isClient) {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
       baseHeaders.Authorization = `Bearer ${accessToken}`;
     }
@@ -112,8 +118,7 @@ const request = async <Response>(
           } catch (error) {
             console.error('Error when logout', error);
           } finally {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            removeTokensFromLocalStorage();
             clientLogoutRequest = null;
             // Redirect về trang login có thể dẫn đến loop vô hạn
             // Nếu không không được xử lý đúng cách
@@ -135,14 +140,15 @@ const request = async <Response>(
   // Đảm bảo logic dưới đây chỉ chạy ở phía client (browser)
   if (isClient) {
     const normalizeUrl = normalizePath(url);
+    const loginRoutes = ['api/auth/login', 'api/guest/auth/login'];
+    const logoutRoutes = ['api/auth/logout', 'api/guest/auth/logout'];
 
-    if (normalizeUrl === 'api/auth/login') {
+    if (loginRoutes.includes(normalizeUrl)) {
       const { accessToken, refreshToken } = (payload as LoginResType).data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-    } else if (normalizeUrl === 'api/auth/logout') {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      setAccessTokenToLocalStorage(accessToken);
+      setRefreshTokenToLocalStorage(refreshToken);
+    } else if (logoutRoutes.includes(normalizeUrl)) {
+      removeTokensFromLocalStorage();
     }
   }
   return data;

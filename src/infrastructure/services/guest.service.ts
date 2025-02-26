@@ -8,19 +8,21 @@ import {
 } from '@/domain/schemas/guest.schema';
 import http from '@/infrastructure/http/fetcher';
 
+const prefix = 'guest';
+
 const guestService = {
   refreshTokenRequest: null as Promise<{
     status: number;
     payload: RefreshTokenResType;
   }> | null,
-  sLogin: (body: GuestLoginBodyType) => http.post<GuestLoginResType>('/guest/auth/login', body),
+  sLogin: (body: GuestLoginBodyType) => http.post<GuestLoginResType>(`/${prefix}/auth/login`, body),
   login: (body: GuestLoginBodyType) =>
-    http.post<GuestLoginResType>('/api/guest/auth/login', body, {
+    http.post<GuestLoginResType>(`/api/${prefix}/auth/login`, body, {
       baseUrl: ''
     }),
   sLogout: (body: LogoutBodyType) =>
     http.post(
-      '/guest/auth/logout',
+      `/${prefix}/auth/logout`,
       {
         refreshToken: body.refreshToken
       },
@@ -30,21 +32,21 @@ const guestService = {
         }
       }
     ),
-  logout: () => http.post('/api/guest/auth/logout', null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AT và RT vào body vì AT và RT tự  động gửi thông qua cookie rồi
-  sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>('/guest/auth/refresh-token', body),
+  logout: () => http.post(`/api/${prefix}/auth/logout`, null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AT và RT vào body vì AT và RT tự  động gửi thông qua cookie rồi
+  sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>(`/${prefix}/auth/refresh-token`, body),
   async refreshToken() {
     if (this.refreshTokenRequest) {
       return this.refreshTokenRequest;
     }
-    this.refreshTokenRequest = http.post<RefreshTokenResType>('/api/guest/auth/refresh-token', null, {
+    this.refreshTokenRequest = http.post<RefreshTokenResType>(`/api/${prefix}/auth/refresh-token`, null, {
       baseUrl: ''
     });
     const result = await this.refreshTokenRequest;
     this.refreshTokenRequest = null;
     return result;
   },
-  order: (body: GuestCreateOrdersBodyType) => http.post<GuestCreateOrdersResType>('/guest/orders', body),
-  getOrderList: () => http.get<GuestGetOrdersResType>('/guest/orders')
+  order: (body: GuestCreateOrdersBodyType) => http.post<GuestCreateOrdersResType>(`/${prefix}/orders`, body),
+  getOrderList: () => http.get<GuestGetOrdersResType>(`/${prefix}/orders`)
 };
 
 export default guestService;
