@@ -8,7 +8,7 @@ const nextConfig = {
         port: '4000'
       },
       {
-        hostname: 'via.placeholder.com',
+        hostname: 'placehold.co',
         pathname: '/**'
       }
     ]
