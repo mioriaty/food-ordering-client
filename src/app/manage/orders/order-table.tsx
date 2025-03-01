@@ -1,6 +1,9 @@
 'use client';
 
 import { GetOrdersResType } from '@/domain/schemas/order.schema';
+import { useGetOrderListQuery } from '@/infrastructure/queries/useOrder';
+import { useGetListTableQuery } from '@/infrastructure/queries/useTable';
+import { AsyncComponent } from '@/libs/components/async-component';
 import AutoPagination from '@/libs/components/auto-pagination';
 import { Button } from '@/libs/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/libs/components/ui/command';
@@ -22,7 +25,7 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { endOfDay, format, startOfDay } from 'date-fns';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Trash } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
 
@@ -31,6 +34,7 @@ import EditOrder from '@/app/manage/orders/edit-order';
 import OrderStatics from '@/app/manage/orders/order-statics';
 import orderTableColumns from '@/app/manage/orders/order-table-columns';
 import { useOrderService } from '@/app/manage/orders/order.service';
+import TableSkeleton from '@/app/manage/orders/table-skeleton';
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: number | undefined) => {},
@@ -55,21 +59,30 @@ export type ServingGuestByTableNumber = Record<number, OrderObjectByGuestID>;
 const PAGE_SIZE = 10;
 const initFromDate = startOfDay(new Date());
 const initToDate = endOfDay(new Date());
+
 export default function OrderTable() {
   const searchParam = useSearchParams();
+
   const [openStatusFilter, setOpenStatusFilter] = useState(false);
   const [fromDate, setFromDate] = useState(initFromDate);
   const [toDate, setToDate] = useState(initToDate);
+
+  const orderListQuery = useGetOrderListQuery({ fromDate, toDate });
+  const tableListQuery = useGetListTableQuery();
+
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
   const pageIndex = page - 1;
   const [orderIdEdit, setOrderIdEdit] = useState<number | undefined>();
-  const orderList: any = [];
-  const tableList: any = [];
-  const tableListSortedByNumber = tableList.sort((a: any, b: any) => a.number - b.number);
+
+  const orderList = orderListQuery?.data?.payload.data || [];
+  const tableList = tableListQuery.data?.payload.data || [];
+  const tableListSortedByNumber = tableList.sort((a, b) => a.number - b.number);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
   const [pagination, setPagination] = useState({
     pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
@@ -129,7 +142,8 @@ export default function OrderTable() {
     >
       <div className="w-full">
         <EditOrder id={orderIdEdit} setId={setOrderIdEdit} onSubmitSuccess={() => {}} />
-        <div className=" flex items-center">
+
+        <div className="flex items-center">
           <div className="flex flex-wrap gap-2">
             <div className="flex items-center">
               <span className="mr-2">Từ</span>
@@ -158,6 +172,7 @@ export default function OrderTable() {
             <AddOrder />
           </div>
         </div>
+
         <div className="flex flex-wrap items-center gap-4 py-4">
           <Input
             placeholder="Tên khách"
@@ -218,47 +233,72 @@ export default function OrderTable() {
               </Command>
             </PopoverContent>
           </Popover>
+
+          <Button
+            variant="destructive"
+            size="icon"
+            onClick={() => {
+              // reset filter in table tanstack table
+              table.getColumn('status')?.setFilterValue('');
+            }}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
         </div>
+
         <OrderStatics
           statics={statics}
           tableList={tableListSortedByNumber}
           servingGuestByTableNumber={servingGuestByTableNumber}
         />
-        {/* <TableSkeleton /> */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={orderTableColumns.length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+
+        <AsyncComponent
+          isLoading={orderListQuery.isPending}
+          isSuccess={orderListQuery.isSuccess}
+          isError={orderListQuery.isError}
+          Loading={<TableSkeleton />}
+          Success={
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={orderTableColumns.length} className="h-24 text-center">
+                        No results.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          }
+        />
+
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-xs text-muted-foreground py-4 flex-1 ">
             Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong{' '}

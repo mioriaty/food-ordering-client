@@ -18,6 +18,7 @@ export const useOrderService = (orderList: GetOrdersResType['data']) => {
     };
     const orderObjectByGuestId: OrderObjectByGuestID = {};
     const guestByTableNumber: ServingGuestByTableNumber = {};
+
     orderList.forEach((order) => {
       statics.status[order.status] = statics.status[order.status] + 1;
       // Nếu table và guest chưa bị xóa

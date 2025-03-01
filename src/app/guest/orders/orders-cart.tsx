@@ -3,6 +3,7 @@
 import { UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGuestGetOrderListQuery } from '@/infrastructure/queries/useGuest';
 import { Badge } from '@/libs/components/ui/badge';
+import { toast } from '@/libs/components/ui/use-toast';
 import socket from '@/libs/socket';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
@@ -32,13 +33,18 @@ export const OrdersCart = () => {
     }
 
     function onUpdateOrder(_data: UpdateOrderResType['data']) {
+      toast({
+        description: `Món ăn ${_data.dishSnapshot.name} vừa được cập nhật sang trạng thái: ${getVietnameseOrderStatus(
+          _data.status
+        )}`,
+        variant: 'success'
+      });
       refetch();
     }
 
-    socket.on('update-order', onUpdateOrder);
-
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('update-order', onUpdateOrder);
 
     return () => {
       socket.off('connect', onConnect);
