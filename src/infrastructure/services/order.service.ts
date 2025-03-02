@@ -1,4 +1,5 @@
 import {
+  GetOrderDetailResType,
   GetOrdersQueryParamsType,
   GetOrdersResType,
   UpdateOrderBodyType,
@@ -19,7 +20,7 @@ const orderService = {
     ),
   updateOrder: (orderId: number, body: UpdateOrderBodyType) =>
     http.put<UpdateOrderResType>(`/${prefix}/${orderId}`, body),
-  getOrderDetail: (orderId: number) => http.get<GetOrdersResType>(`/${prefix}/${orderId}`)
+  getOrderDetail: (orderId: number) => http.get<GetOrderDetailResType>(`/${prefix}/${orderId}`)
 };
 
 export default orderService;

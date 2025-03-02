@@ -1,4 +1,4 @@
-import { Home, LineChart, Salad, ShoppingCart, Table, Users2 } from 'lucide-react';
+import { Home, LineChart, Salad, ShoppingCart, Table2, Users2 } from 'lucide-react';
 
 const menuItems = [
   {
@@ -13,7 +13,7 @@ const menuItems = [
   },
   {
     title: 'Bàn ăn',
-    Icon: Table,
+    Icon: Table2,
     href: '/manage/tables'
   },
   {

@@ -44,6 +44,7 @@ export default function EditTable({
   useEffect(() => {
     if (!data) return;
     const { capacity, status } = data.payload.data;
+
     form.reset({
       capacity,
       status,
@@ -95,7 +96,6 @@ export default function EditTable({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            onReset={handleReset}
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="edit-table-form"

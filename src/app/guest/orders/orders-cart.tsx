@@ -4,6 +4,7 @@ import { UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGuestGetOrderListQuery } from '@/infrastructure/queries/useGuest';
 import { Badge } from '@/libs/components/ui/badge';
 import { toast } from '@/libs/components/ui/use-toast';
+import { OrderStatus } from '@/libs/constants/type';
 import socket from '@/libs/socket';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
@@ -14,10 +15,38 @@ export const OrdersCart = () => {
   const { data, refetch } = useGuestGetOrderListQuery();
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
-  const totalPrice = useMemo(
-    () => orders.reduce((sum, order) => sum + order.dishSnapshot.price * order.quantity, 0),
-    [orders]
-  );
+  const { waitForPayment, paid } = useMemo(() => {
+    return orders.reduce(
+      (result, order) => {
+        if (
+          order.status === OrderStatus.Pending ||
+          order.status === OrderStatus.Processing ||
+          order.status === OrderStatus.Delivered
+        ) {
+          return {
+            ...result,
+            waitForPayment: {
+              price: result.waitForPayment.price + order.quantity * order.dishSnapshot.price,
+              quantity: result.waitForPayment.quantity + order.quantity
+            }
+          };
+        }
+
+        if (order.status === OrderStatus.Paid) {
+          return {
+            ...result,
+            paid: {
+              price: result.paid.price + order.quantity * order.dishSnapshot.price,
+              quantity: result.paid.quantity + order.quantity
+            }
+          };
+        }
+
+        return result;
+      },
+      { waitForPayment: { price: 0, quantity: 0 }, paid: { price: 0, quantity: 0 } }
+    );
+  }, [orders]);
 
   useEffect(() => {
     if (socket.connected) {
@@ -85,8 +114,21 @@ export const OrdersCart = () => {
       ))}
 
       <div className="sticky bottom-0">
-        <div className="w-full justify-center font-semibold text-center">
-          <span>Tổng cộng · {orders.length} món</span> · <span>{formatCurrency(totalPrice)}</span>
+        <div className="text-center space-y-2">
+          <div className="space-x-1">
+            <span className="font-semibold">Chưa thanh toán:</span>
+            <Badge variant="outline">{waitForPayment.quantity} món</Badge>
+            <Badge className="bg-sky-600">
+              <span>{formatCurrency(waitForPayment.price)}</span>
+            </Badge>
+          </div>
+          <div className="space-x-1">
+            <span className="font-semibold">Đã thanh toán:</span>
+            <Badge variant="outline">{paid.quantity} món</Badge>
+            <Badge className="bg-green-700">
+              <span>{formatCurrency(paid.price)}</span>
+            </Badge>
+          </div>
         </div>
       </div>
     </>

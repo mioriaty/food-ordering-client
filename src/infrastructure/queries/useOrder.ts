@@ -1,6 +1,6 @@
 import { GetOrdersQueryParamsType, UpdateOrderBodyType } from '@/domain/schemas/order.schema';
 import orderService from '@/infrastructure/services/order.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetOrderListQuery = (queries: GetOrdersQueryParamsType) => {
   return useQuery({
@@ -18,13 +18,8 @@ export const useGetOrderDetailQuery = (orderId: number, enabledCall: boolean) =>
 };
 
 export const useUpdateOrderMutation = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: ({ orderId, ...body }: UpdateOrderBodyType & { orderId: number }) =>
-      orderService.updateOrder(orderId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-    }
+      orderService.updateOrder(orderId, body)
   });
 };

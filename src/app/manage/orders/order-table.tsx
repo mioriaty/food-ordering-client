@@ -1,7 +1,8 @@
 'use client';
 
-import { GetOrdersResType } from '@/domain/schemas/order.schema';
-import { useGetOrderListQuery } from '@/infrastructure/queries/useOrder';
+import { GuestCreateOrdersResType } from '@/domain/schemas/guest.schema';
+import { GetOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
+import { useGetOrderListQuery, useUpdateOrderMutation } from '@/infrastructure/queries/useOrder';
 import { useGetListTableQuery } from '@/infrastructure/queries/useTable';
 import { AsyncComponent } from '@/libs/components/async-component';
 import AutoPagination from '@/libs/components/auto-pagination';
@@ -10,8 +11,11 @@ import { Command, CommandGroup, CommandItem, CommandList } from '@/libs/componen
 import { Input } from '@/libs/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/popover';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
+import { toast } from '@/libs/components/ui/use-toast';
 import { OrderStatusValues } from '@/libs/constants/type';
+import socket from '@/libs/socket';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cn } from '@/libs/utils/string';
 import {
   ColumnFiltersState,
@@ -68,6 +72,9 @@ export default function OrderTable() {
   const [toDate, setToDate] = useState(initToDate);
 
   const orderListQuery = useGetOrderListQuery({ fromDate, toDate });
+  const updateOrderMutation = useUpdateOrderMutation();
+  const refetchOrderList = orderListQuery.refetch;
+
   const tableListQuery = useGetListTableQuery();
 
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
@@ -89,13 +96,6 @@ export default function OrderTable() {
   });
 
   const { statics, orderObjectByGuestId, servingGuestByTableNumber } = useOrderService(orderList);
-
-  const changeStatus = async (_body: {
-    orderId: number;
-    dishId: number;
-    status: (typeof OrderStatusValues)[number];
-    quantity: number;
-  }) => {};
 
   const table = useReactTable({
     data: orderList,
@@ -120,6 +120,57 @@ export default function OrderTable() {
   });
 
   useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      console.log('connected', socket.id);
+    }
+
+    function onDisconnect() {
+      console.log('disconnected', socket.id);
+    }
+
+    function refetch() {
+      const now = new Date();
+      if (now >= fromDate && now <= toDate) {
+        refetchOrderList();
+      }
+    }
+
+    function onUpdateOrder(_data: UpdateOrderResType['data']) {
+      toast({
+        description: `Món ăn ${_data.dishSnapshot.name} vừa được cập nhật sang trạng thái: ${getVietnameseOrderStatus(
+          _data.status
+        )}`,
+        variant: 'success'
+      });
+      refetch();
+    }
+
+    function onListenNewOrder(_data: GuestCreateOrdersResType['data']) {
+      toast({
+        description: `Khách ${_data[0].guest?.name} tại bàn ${_data[0].tableNumber} vừa đặt ${_data.length} đơn`,
+        variant: 'success'
+      });
+      refetch();
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('new-order', onListenNewOrder);
+    socket.on('update-order', onUpdateOrder);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      socket.off('new-order', onListenNewOrder);
+      socket.off('update-order', onUpdateOrder);
+    };
+  }, [fromDate, refetchOrderList, toDate]);
+
+  useEffect(() => {
     table.setPagination({
       pageIndex,
       pageSize: PAGE_SIZE
@@ -129,6 +180,23 @@ export default function OrderTable() {
   const resetDateFilter = () => {
     setFromDate(initFromDate);
     setToDate(initToDate);
+  };
+
+  const changeStatus = async (body: {
+    orderId: number;
+    dishId: number;
+    status: (typeof OrderStatusValues)[number];
+    quantity: number;
+  }) => {
+    try {
+      const response = await updateOrderMutation.mutateAsync(body);
+      toast({
+        description: response.payload.message,
+        variant: 'success'
+      });
+    } catch (error) {
+      handleErrorApi({ error });
+    }
   };
 
   return (
