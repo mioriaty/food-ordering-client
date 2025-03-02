@@ -1,7 +1,7 @@
 'use client';
 
 import { GuestCreateOrdersResType } from '@/domain/schemas/guest.schema';
-import { GetOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
+import { GetOrdersResType, PayGuestOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGetOrderListQuery, useUpdateOrderMutation } from '@/infrastructure/queries/useOrder';
 import { useGetListTableQuery } from '@/infrastructure/queries/useTable';
 import { AsyncComponent } from '@/libs/components/async-component';
@@ -28,7 +28,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { endOfDay, format, startOfDay } from 'date-fns';
+import { endOfDay, format, startOfWeek } from 'date-fns';
 import { Check, ChevronsUpDown, Trash } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
@@ -61,7 +61,7 @@ export type OrderObjectByGuestID = Record<number, GetOrdersResType['data']>;
 export type ServingGuestByTableNumber = Record<number, OrderObjectByGuestID>;
 
 const PAGE_SIZE = 10;
-const initFromDate = startOfDay(new Date());
+const initFromDate = startOfWeek(new Date());
 const initToDate = endOfDay(new Date());
 
 export default function OrderTable() {
@@ -157,16 +157,26 @@ export default function OrderTable() {
       refetch();
     }
 
+    function onPayment(data: PayGuestOrdersResType['data']) {
+      toast({
+        description: `Khách ${data[0].guest?.name} đã thanh toán thành công`,
+        variant: 'success'
+      });
+      refetch();
+    }
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('new-order', onListenNewOrder);
     socket.on('update-order', onUpdateOrder);
+    socket.on('payment', onPayment);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('new-order', onListenNewOrder);
       socket.off('update-order', onUpdateOrder);
+      socket.off('payment', onPayment);
     };
   }, [fromDate, refetchOrderList, toDate]);
 

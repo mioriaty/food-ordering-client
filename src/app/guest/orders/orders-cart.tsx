@@ -1,6 +1,6 @@
 'use client';
 
-import { UpdateOrderResType } from '@/domain/schemas/order.schema';
+import { PayGuestOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGuestGetOrderListQuery } from '@/infrastructure/queries/useGuest';
 import { Badge } from '@/libs/components/ui/badge';
 import { toast } from '@/libs/components/ui/use-toast';
@@ -71,14 +71,24 @@ export const OrdersCart = () => {
       refetch();
     }
 
+    function onPayment(_data: PayGuestOrdersResType['data']) {
+      toast({
+        description: 'Đã thanh toán thành công',
+        variant: 'success'
+      });
+      refetch();
+    }
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('update-order', onUpdateOrder);
+    socket.on('payment', onPayment);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('update-order', onUpdateOrder);
+      socket.off('payment', onPayment);
     };
   }, [refetch]);
 

@@ -1,21 +1,47 @@
-import { GetOrdersResType } from '@/domain/schemas/order.schema';
+import { GetOrdersResType, PayGuestOrdersResType } from '@/domain/schemas/order.schema';
+import { usePayOrderMutation } from '@/infrastructure/queries/useOrder';
+import { LoadingButton } from '@/libs/components/loading-button';
 import { Badge } from '@/libs/components/ui/badge';
-import { Button } from '@/libs/components/ui/button';
 import { OrderStatusIcon } from '@/libs/constants/order-status-icon';
 import { OrderStatus } from '@/libs/constants/type';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { formatDateTimeToLocaleString, formatDateTimeToTimeString } from '@/libs/utils/format-date';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import Image from 'next/image';
-import { Fragment } from 'react';
+import { FC, Fragment } from 'react';
 
 type Guest = GetOrdersResType['data'][0]['guest'];
 type Orders = GetOrdersResType['data'];
-export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orders: Orders }) {
+
+interface OrderGuestDetailProps {
+  guest: Guest;
+  orders: Orders;
+  onPaymentSuccess?: (data: PayGuestOrdersResType) => void;
+}
+
+const OrderGuestDetail: FC<OrderGuestDetailProps> = ({ guest, orders, onPaymentSuccess }) => {
+  const payMutation = usePayOrderMutation();
+
   const ordersFilterToPurchase = guest
     ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected)
     : [];
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : [];
+
+  const handlePay = async () => {
+    if (payMutation.isPending) return;
+    if (!guest) return;
+
+    try {
+      const result = await payMutation.mutateAsync({
+        guestId: guest.id
+      });
+      onPaymentSuccess?.(result.payload);
+    } catch (error) {
+      handleErrorApi({ error });
+    }
+  };
+
   return (
     <div className="space-y-2 text-sm">
       {guest && (
@@ -112,10 +138,19 @@ export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orde
       </div>
 
       <div>
-        <Button className="w-full" size={'sm'} variant={'secondary'} disabled={ordersFilterToPurchase.length === 0}>
+        <LoadingButton
+          isLoading={payMutation.isPending}
+          className="w-full"
+          size={'sm'}
+          variant={'secondary'}
+          disabled={ordersFilterToPurchase.length === 0}
+          onClick={handlePay}
+        >
           Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
-        </Button>
+        </LoadingButton>
       </div>
     </div>
   );
-}
+};
+
+export default OrderGuestDetail;

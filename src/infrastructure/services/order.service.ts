@@ -2,6 +2,8 @@ import {
   GetOrderDetailResType,
   GetOrdersQueryParamsType,
   GetOrdersResType,
+  PayGuestOrdersBodyType,
+  PayGuestOrdersResType,
   UpdateOrderBodyType,
   UpdateOrderResType
 } from '@/domain/schemas/order.schema';
@@ -20,7 +22,8 @@ const orderService = {
     ),
   updateOrder: (orderId: number, body: UpdateOrderBodyType) =>
     http.put<UpdateOrderResType>(`/${prefix}/${orderId}`, body),
-  getOrderDetail: (orderId: number) => http.get<GetOrderDetailResType>(`/${prefix}/${orderId}`)
+  getOrderDetail: (orderId: number) => http.get<GetOrderDetailResType>(`/${prefix}/${orderId}`),
+  pay: (body: PayGuestOrdersBodyType) => http.post<PayGuestOrdersResType>(`/${prefix}/pay`, body)
 };
 
 export default orderService;
