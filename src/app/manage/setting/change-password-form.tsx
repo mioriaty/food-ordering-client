@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangePasswordV2Body, ChangePasswordV2BodyType } from '@/domain/schemas/account.schema';
-import { useChangePasswordMeMutation } from '@/infrastructure/queries/useMe';
+import { useChangePasswordMeMutation } from '@/infrastructure/queries/useAccount';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';

@@ -1,8 +1,8 @@
 'use client';
 
 import { useAuthContext } from '@/contexts/auth-context';
+import { useMeQuery } from '@/infrastructure/queries/useAccount';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
-import { useMeQuery } from '@/infrastructure/queries/useMe';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';
 import {

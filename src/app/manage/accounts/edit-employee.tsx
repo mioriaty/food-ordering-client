@@ -1,7 +1,7 @@
 'use client';
 
 import { UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/domain/schemas/account.schema';
-import { useGetAccountByIdQuery, useUpdateAccountMutation } from '@/infrastructure/queries/useMe';
+import { useGetAccountByIdQuery, useUpdateAccountMutation } from '@/infrastructure/queries/useAccount';
 import { useMediaMutation } from '@/infrastructure/queries/useMedia';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';

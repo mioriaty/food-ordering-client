@@ -4,14 +4,19 @@ import {
   ChangePasswordV2BodyType,
   ChangePasswordV2ResType,
   CreateEmployeeAccountBodyType,
+  CreateGuestBodyType,
+  CreateGuestResType,
+  GetGuestListQueryParamsType,
+  GetListGuestsResType,
   UpdateEmployeeAccountBodyType,
   UpdateMeBodyType
 } from '@/domain/schemas/account.schema';
 import http from '@/infrastructure/http/fetcher';
+import qs from 'query-string';
 
 const prefix = '/accounts';
 
-const meService = {
+const accountService = {
   getMe: async () => {
     const response = await http.get<AccountResType>(`${prefix}/me`);
     return response;
@@ -61,7 +66,16 @@ const meService = {
   getEmployee: async (id: number) => {
     const response = await http.get<AccountResType>(`${prefix}/detail/${id}`);
     return response;
-  }
+  },
+  guestList: async (queries: GetGuestListQueryParamsType) => {
+    return http.get<GetListGuestsResType>(
+      `${prefix}/guests?${qs.stringify({
+        fromDate: queries.fromDate?.toISOString(),
+        toDate: queries.toDate?.toISOString()
+      })}`
+    );
+  },
+  createGuest: (body: CreateGuestBodyType) => http.post<CreateGuestResType>(`${prefix}/guests`, body)
 };
 
-export default meService;
+export default accountService;

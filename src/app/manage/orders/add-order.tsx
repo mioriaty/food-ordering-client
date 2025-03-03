@@ -4,6 +4,9 @@ import { GetListGuestsResType } from '@/domain/schemas/account.schema';
 import { DishListResType } from '@/domain/schemas/dish.schema';
 import { GuestLoginBody, GuestLoginBodyType } from '@/domain/schemas/guest.schema';
 import { CreateOrdersBodyType } from '@/domain/schemas/order.schema';
+import { useCreateGuestMutation } from '@/infrastructure/queries/useAccount';
+import { useGetListDishQuery } from '@/infrastructure/queries/useDish';
+import { useCreateOrderMutation } from '@/infrastructure/queries/useOrder';
 import { Button } from '@/libs/components/ui/button';
 import {
   Dialog,
@@ -17,8 +20,10 @@ import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/for
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { Switch } from '@/libs/components/ui/switch';
+import { toast } from '@/libs/components/ui/use-toast';
 import { DishStatus } from '@/libs/constants/type';
 import { formatCurrency } from '@/libs/utils/format-currency';
+import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cn } from '@/libs/utils/string';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle } from 'lucide-react';
@@ -35,7 +40,9 @@ export default function AddOrder() {
   const [selectedGuest, setSelectedGuest] = useState<GetListGuestsResType['data'][0] | null>(null);
   const [isNewGuest, setIsNewGuest] = useState(true);
   const [orders, setOrders] = useState<CreateOrdersBodyType['orders']>([]);
-  const dishes = useMemo<DishListResType['data']>(() => [], []);
+  const { data } = useGetListDishQuery();
+
+  const dishes = useMemo<DishListResType['data']>(() => data?.payload.data || [], [data]);
 
   const totalPrice = useMemo(() => {
     return dishes.reduce((result, dish) => {
@@ -45,6 +52,9 @@ export default function AddOrder() {
     }, 0);
   }, [dishes, orders]);
 
+  const createOrderMutation = useCreateOrderMutation();
+  const createGuestMutation = useCreateGuestMutation();
+
   const form = useForm<GuestLoginBodyType>({
     resolver: zodResolver(GuestLoginBody),
     defaultValues: {
@@ -52,8 +62,8 @@ export default function AddOrder() {
       tableNumber: 0
     }
   });
-  // const name = form.watch('name');
-  // const tableNumber = form.watch('tableNumber');
+  const name = form.watch('name');
+  const tableNumber = form.watch('tableNumber');
 
   const handleQuantityChange = (dishId: number, quantity: number) => {
     setOrders((prevOrders) => {
@@ -70,10 +80,59 @@ export default function AddOrder() {
     });
   };
 
-  const handleOrder = async () => {};
+  const handleOrder = async () => {
+    try {
+      let guestId = selectedGuest?.id;
+
+      if (isNewGuest) {
+        const guestResponse = await createGuestMutation.mutateAsync({
+          name,
+          tableNumber
+        });
+        guestId = guestResponse.payload.data.id;
+      }
+
+      if (!guestId) {
+        toast({
+          description: 'Hãy chọn khách hàng',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const orderResponse = await createOrderMutation.mutateAsync({
+        guestId,
+        orders
+      });
+
+      toast({
+        description: orderResponse.payload.message,
+        variant: 'success'
+      });
+      handleReset();
+    } catch (error) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
+
+  const handleReset = () => {
+    form.reset();
+    setOrders([]);
+    setSelectedGuest(null);
+    setIsNewGuest(true);
+    setOpen(false);
+  };
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog
+      onOpenChange={(value) => {
+        if (!value) {
+          handleReset();
+        }
+        setOpen(value);
+      }}
+      open={open}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="h-7 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />

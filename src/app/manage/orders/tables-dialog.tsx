@@ -1,4 +1,5 @@
 import { TableListResType } from '@/domain/schemas/table.schema';
+import { useGetListTableQuery } from '@/infrastructure/queries/useTable';
 import AutoPagination from '@/libs/components/auto-pagination';
 import { Button } from '@/libs/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/libs/components/ui/dialog';
@@ -50,7 +51,10 @@ const PAGE_SIZE = 10;
 
 export function TablesDialog({ onChoose }: { onChoose: (table: TableItem) => void }) {
   const [open, setOpen] = useState(false);
-  const data: TableListResType['data'] = [];
+  const tableListQuery = useGetListTableQuery();
+
+  const data = tableListQuery.data?.payload.data || [];
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

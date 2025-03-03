@@ -1,7 +1,7 @@
 'use client';
 
 import { UpdateMeBody, UpdateMeBodyType } from '@/domain/schemas/account.schema';
-import { useMeQuery, useUpdateMeMutation } from '@/infrastructure/queries/useMe';
+import { useMeQuery, useUpdateMeMutation } from '@/infrastructure/queries/useAccount';
 import { useMediaMutation } from '@/infrastructure/queries/useMedia';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';

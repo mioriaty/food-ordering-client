@@ -1,7 +1,7 @@
 'use client';
 
 import { AccountListResType, AccountType } from '@/domain/schemas/account.schema';
-import { useGetAccountListQuery } from '@/infrastructure/queries/useMe';
+import { useGetAccountListQuery } from '@/infrastructure/queries/useAccount';
 import AutoPagination from '@/libs/components/auto-pagination';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
 import { Button } from '@/libs/components/ui/button';

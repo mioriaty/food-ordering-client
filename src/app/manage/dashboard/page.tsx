@@ -1,4 +1,4 @@
-import meService from '@/infrastructure/services/me.service';
+import accountService from '@/infrastructure/services/account.service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { cookies } from 'next/headers';
@@ -11,7 +11,7 @@ export default async function Dashboard() {
   let name = '';
 
   try {
-    const result = await meService.sGetMe(accessToken);
+    const result = await accountService.sGetMe(accessToken);
     name = result.payload.data.name;
   } catch (error) {
     if (isRedirectError(error)) {

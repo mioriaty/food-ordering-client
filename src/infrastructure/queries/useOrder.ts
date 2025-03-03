@@ -34,3 +34,9 @@ export const usePayOrderMutation = () => {
     }
   });
 };
+
+export const useCreateOrderMutation = () => {
+  return useMutation({
+    mutationFn: orderService.createOrder
+  });
+};

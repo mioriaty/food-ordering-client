@@ -1,4 +1,6 @@
 import {
+  CreateOrdersBodyType,
+  CreateOrdersResType,
   GetOrderDetailResType,
   GetOrdersQueryParamsType,
   GetOrdersResType,
@@ -23,7 +25,8 @@ const orderService = {
   updateOrder: (orderId: number, body: UpdateOrderBodyType) =>
     http.put<UpdateOrderResType>(`/${prefix}/${orderId}`, body),
   getOrderDetail: (orderId: number) => http.get<GetOrderDetailResType>(`/${prefix}/${orderId}`),
-  pay: (body: PayGuestOrdersBodyType) => http.post<PayGuestOrdersResType>(`/${prefix}/pay`, body)
+  pay: (body: PayGuestOrdersBodyType) => http.post<PayGuestOrdersResType>(`/${prefix}/pay`, body),
+  createOrder: (body: CreateOrdersBodyType) => http.post<CreateOrdersResType>(`/${prefix}`, body)
 };
 
 export default orderService;

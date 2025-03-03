@@ -1,6 +1,6 @@
 import { ChangePasswordV2BodyType } from '@/domain/schemas/account.schema';
 import { HttpError } from '@/infrastructure/http/fetcher';
-import meService from '@/infrastructure/services/me.service';
+import accountService from '@/infrastructure/services/account.service';
 import { decodeToken } from '@/libs/utils/decode-token';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cookies } from 'next/headers';
@@ -21,7 +21,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const { payload } = await meService.sChangePassword(currentAccessToken, body);
+    const { payload } = await accountService.sChangePassword(currentAccessToken, body);
 
     const { accessToken, refreshToken } = payload.data;
 

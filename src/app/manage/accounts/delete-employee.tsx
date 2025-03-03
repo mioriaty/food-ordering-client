@@ -1,5 +1,5 @@
 import { AccountListResType } from '@/domain/schemas/account.schema';
-import { useDeleteAccountMutation } from '@/infrastructure/queries/useMe';
+import { useDeleteAccountMutation } from '@/infrastructure/queries/useAccount';
 import {
   AlertDialog,
   AlertDialogAction,

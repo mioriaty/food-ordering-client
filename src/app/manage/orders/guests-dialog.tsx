@@ -1,4 +1,5 @@
 import { GetListGuestsResType } from '@/domain/schemas/account.schema';
+import { useGetGuestListQuery } from '@/infrastructure/queries/useAccount';
 import AutoPagination from '@/libs/components/auto-pagination';
 import { Button } from '@/libs/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/libs/components/ui/dialog';
@@ -18,7 +19,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { endOfDay, format, startOfDay } from 'date-fns';
+import { endOfDay, format, startOfWeek } from 'date-fns';
 import { useEffect, useState } from 'react';
 
 type GuestItem = GetListGuestsResType['data'][0];
@@ -58,14 +59,16 @@ export const columns: ColumnDef<GuestItem>[] = [
 ];
 
 const PAGE_SIZE = 10;
-const initFromDate = startOfDay(new Date());
+const initFromDate = startOfWeek(new Date());
 const initToDate = endOfDay(new Date());
 
 export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem) => void }) {
   const [open, setOpen] = useState(false);
   const [fromDate, setFromDate] = useState(initFromDate);
   const [toDate, setToDate] = useState(initToDate);
-  const data: GetListGuestsResType['data'] = [];
+
+  const guestListQuery = useGetGuestListQuery({ fromDate, toDate });
+  const data = guestListQuery.data?.payload.data || [];
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
