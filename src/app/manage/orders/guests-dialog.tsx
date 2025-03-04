@@ -220,7 +220,13 @@ export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem
                 <AutoPagination
                   page={table.getState().pagination.pageIndex + 1}
                   pageSize={table.getPageCount()}
-                  pathname="/manage/Guests"
+                  onClick={(page) => {
+                    table.setPagination({
+                      pageIndex: page - 1,
+                      pageSize: PAGE_SIZE
+                    });
+                  }}
+                  isLink={false}
                 />
               </div>
             </div>

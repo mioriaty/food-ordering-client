@@ -46,8 +46,8 @@ export default function EditTable({
     const { capacity, status } = data.payload.data;
 
     form.reset({
-      capacity,
-      status,
+      capacity: capacity,
+      status: status,
       changeToken: form.getValues('changeToken')
     });
   }, [data, form]);
@@ -71,8 +71,8 @@ export default function EditTable({
   };
 
   const handleReset = () => {
-    form.reset();
     setId(undefined);
+    form.reset();
   };
 
   return (
@@ -96,6 +96,7 @@ export default function EditTable({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
+            onReset={handleReset}
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="edit-table-form"
@@ -143,7 +144,7 @@ export default function EditTable({
                     <div className="grid grid-cols-4 items-center justify-items-start gap-4">
                       <Label htmlFor="description">Trạng thái</Label>
                       <div className="col-span-3 w-full space-y-2">
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Chọn trạng thái" />
