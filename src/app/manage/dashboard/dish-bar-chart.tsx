@@ -1,8 +1,10 @@
 'use client';
 
+import { DashboardIndicatorResType } from '@/domain/schemas/indicator.schema';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/libs/components/ui/chart';
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { useMemo } from 'react';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 const chartConfig = {
   visitors: {
@@ -28,15 +30,31 @@ const chartConfig = {
     label: 'Other',
     color: 'hsl(var(--chart-5))'
   }
-} satisfies ChartConfig;
-const chartData = [
-  { name: 'chrome', successOrders: 275, fill: 'var(--color-chrome)' },
-  { name: 'safari', successOrders: 200, fill: 'var(--color-safari)' },
-  { name: 'firefox', successOrders: 187, fill: 'var(--color-firefox)' },
-  { name: 'edge', successOrders: 173, fill: 'var(--color-edge)' },
-  { name: 'other', successOrders: 90, fill: 'var(--color-other)' }
+} satisfies ChartConfig; // "satisfies" là một toán tử TypeScript kiểm tra xem một đối tượng có tuân thủ một kiểu dữ liệu mà không làm thay đổi kiểu được suy luận của nó
+
+const colors = [
+  'var(--color-chrome)',
+  'var(--color-safari)',
+  'var(--color-firefox)',
+  'var(--color-edge)',
+  'var(--color-other)'
 ];
-export function DishBarChart() {
+
+interface DishBarChartProps {
+  data: DashboardIndicatorResType['data']['dishIndicator'];
+}
+
+export function DishBarChart({ data }: DishBarChartProps) {
+  const chartData = useMemo(
+    () =>
+      data.map((item, index) => ({
+        name: item.name,
+        successOrders: item.successOrders,
+        fill: colors[index] ?? colors[colors.length - 1]
+      })),
+    [data]
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -45,30 +63,28 @@ export function DishBarChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={{
-              left: 0
-            }}
-          >
-            <YAxis
-              dataKey="name"
-              type="category"
-              tickLine={false}
-              tickMargin={2}
-              axisLine={false}
-              tickFormatter={(value) => {
-                return value;
-
-                // return chartConfig[value as keyof typeof chartConfig]?.label
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              layout="vertical"
+              margin={{
+                left: 5
               }}
-            />
-            <XAxis dataKey="successOrders" type="number" hide />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar dataKey="successOrders" name={'Đơn thanh toán'} layout="vertical" radius={5} />
-          </BarChart>
+            >
+              <YAxis
+                dataKey="name"
+                type="category"
+                tickLine={false}
+                tickMargin={2}
+                axisLine={false}
+                tickFormatter={(value) => value}
+              />
+              <XAxis dataKey="successOrders" type="number" hide />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+              <Bar dataKey="successOrders" name={'Đơn thanh toán: '} layout="vertical" radius={5} />
+            </BarChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">

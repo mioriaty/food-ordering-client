@@ -1,4 +1,4 @@
-import { Home, LineChart, Salad, ShoppingCart, Table2, Users2 } from 'lucide-react';
+import { Home, Salad, ShoppingCart, Table2, Users2 } from 'lucide-react';
 
 const menuItems = [
   {
@@ -21,12 +21,11 @@ const menuItems = [
     Icon: Salad,
     href: '/manage/dishes'
   },
-
-  {
-    title: 'Phân tích',
-    Icon: LineChart,
-    href: '/manage/analytics'
-  },
+  // {
+  //   title: 'Phân tích',
+  //   Icon: LineChart,
+  //   href: '/manage/analytics'
+  // },
   {
     title: 'Nhân viên',
     Icon: Users2,

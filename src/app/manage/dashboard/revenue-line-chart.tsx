@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardIndicatorResType } from '@/domain/schemas/indicator.schema';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/libs/components/ui/chart';
 import { format, parse } from 'date-fns';
@@ -12,50 +13,11 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-export function RevenueLineChart() {
-  // fake 10 item
-  const chartData = [
-    {
-      date: '01/01/2024',
-      revenue: 1000
-    },
-    {
-      date: '02/01/2024',
-      revenue: 2000
-    },
-    {
-      date: '03/01/2024',
-      revenue: 1500
-    },
-    {
-      date: '04/01/2024',
-      revenue: 3000
-    },
-    {
-      date: '05/01/2024',
-      revenue: 2500
-    },
-    {
-      date: '06/01/2024',
-      revenue: 4000
-    },
-    {
-      date: '07/01/2024',
-      revenue: 3500
-    },
-    {
-      date: '08/01/2024',
-      revenue: 5000
-    },
-    {
-      date: '09/01/2024',
-      revenue: 4500
-    },
-    {
-      date: '10/01/2024',
-      revenue: 6000
-    }
-  ];
+interface RevenueLineChartProps {
+  data: DashboardIndicatorResType['data']['revenueByDate'];
+}
+
+export function RevenueLineChart({ data }: RevenueLineChartProps) {
   return (
     <Card>
       <CardHeader>
@@ -66,7 +28,7 @@ export function RevenueLineChart() {
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12
@@ -79,10 +41,10 @@ export function RevenueLineChart() {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => {
-                if (chartData.length < 8) {
+                if (data.length < 8) {
                   return value;
                 }
-                if (chartData.length < 33) {
+                if (data.length < 33) {
                   const date = parse(value, 'dd/MM/yyyy', new Date());
                   return format(date, 'dd');
                 }
@@ -90,7 +52,14 @@ export function RevenueLineChart() {
               }}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
-            <Line dataKey="revenue" type="linear" stroke="var(--color-desktop)" strokeWidth={2} dot={false} />
+            <Line
+              name="Doanh thu"
+              dataKey="revenue"
+              type="linear"
+              stroke="var(--color-desktop)"
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>
