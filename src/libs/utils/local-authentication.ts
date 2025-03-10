@@ -19,7 +19,11 @@ export const removeTokensFromLocalStorage = () => {
   }
 };
 
-export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuccess?: () => void }) => {
+export const checkAndRefreshToken = async (param?: {
+  onError?: () => void;
+  onSuccess?: () => void;
+  forceToRefresh?: boolean;
+}) => {
   // Không nên đưa logic lấy access và refresh token ra khỏi cái function `checkAndRefreshToken`
   // Vì để mỗi lần mà checkAndRefreshToken() được gọi thì chúng ta se có một access và refresh token mới
   // Tránh hiện tượng bug nó lấy access và refresh token cũ ở lần đầu rồi gọi cho các lần tiếp theo
@@ -45,7 +49,7 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   const timeRemaining = decodedAccessToken.exp - now;
   const timeExpired = decodedAccessToken.exp - decodedAccessToken.iat;
 
-  if (timeRemaining < timeExpired / 3) {
+  if (param?.forceToRefresh || timeRemaining < timeExpired / 3) {
     // Gọi API refresh token
     try {
       const role = decodedRefreshToken.role;

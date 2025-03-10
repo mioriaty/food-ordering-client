@@ -16,8 +16,10 @@ import {
 import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
 import { Switch } from '@/libs/components/ui/switch';
 import { toast } from '@/libs/components/ui/use-toast';
+import { Role, RoleValues } from '@/libs/constants/type';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload } from 'lucide-react';
@@ -47,7 +49,8 @@ export default function EditEmployee({
       avatar: undefined,
       password: undefined,
       confirmPassword: undefined,
-      changePassword: false
+      changePassword: false,
+      role: Role.Employee
     }
   });
   const avatar = form.watch('avatar');
@@ -62,14 +65,15 @@ export default function EditEmployee({
 
   useEffect(() => {
     if (data) {
-      const { name, avatar, email } = data.payload.data;
+      const { name, avatar, email, role } = data.payload.data;
       form.reset({
         name,
         email,
         avatar: avatar ?? undefined,
         changePassword: form.getValues('changePassword'),
         password: form.getValues('password'),
-        confirmPassword: form.getValues('confirmPassword')
+        confirmPassword: form.getValues('confirmPassword'),
+        role
       });
     }
   }, [data, form]);
@@ -201,6 +205,35 @@ export default function EditEmployee({
               />
               <FormField
                 control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="grid grid-cols-4 items-center justify-items-start gap-4">
+                      <Label htmlFor="role">Vai trò</Label>
+                      <div className="col-span-3 w-full space-y-2">
+                        <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Chọn vai trò" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {RoleValues.map((role) => {
+                              if (role === Role.Guest) return null;
+                              return (
+                                <SelectItem key={role} value={role}>
+                                  {role}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </div>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="changePassword"
                 render={({ field }) => (
                   <FormItem>
@@ -214,39 +247,40 @@ export default function EditEmployee({
                   </FormItem>
                 )}
               />
+
               {changePassword && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="grid grid-cols-4 items-center justify-items-start gap-4">
-                        <Label htmlFor="password">Mật khẩu mới</Label>
-                        <div className="col-span-3 w-full space-y-2">
-                          <Input id="password" className="w-full" type="password" {...field} />
-                          <FormMessage />
+                <>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="grid grid-cols-4 items-center justify-items-start gap-4">
+                          <Label htmlFor="password">Mật khẩu mới</Label>
+                          <div className="col-span-3 w-full space-y-2">
+                            <Input id="password" className="w-full" type="password" {...field} />
+                            <FormMessage />
+                          </div>
                         </div>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              )}
-              {changePassword && (
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="grid grid-cols-4 items-center justify-items-start gap-4">
-                        <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
-                        <div className="col-span-3 w-full space-y-2">
-                          <Input id="confirmPassword" className="w-full" type="password" {...field} />
-                          <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="grid grid-cols-4 items-center justify-items-start gap-4">
+                          <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
+                          <div className="col-span-3 w-full space-y-2">
+                            <Input id="confirmPassword" className="w-full" type="password" {...field} />
+                            <FormMessage />
+                          </div>
                         </div>
-                      </div>
-                    </FormItem>
-                  )}
-                />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
             </div>
           </form>

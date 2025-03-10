@@ -28,7 +28,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { endOfDay, format, startOfWeek } from 'date-fns';
+import { endOfDay, format, startOfMonth } from 'date-fns';
 import { Check, ChevronsUpDown, Trash } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
@@ -61,7 +61,7 @@ export type OrderObjectByGuestID = Record<number, GetOrdersResType['data']>;
 export type ServingGuestByTableNumber = Record<number, OrderObjectByGuestID>;
 
 const PAGE_SIZE = 10;
-const initFromDate = startOfWeek(new Date());
+const initFromDate = startOfMonth(new Date());
 const initToDate = endOfDay(new Date());
 
 export default function OrderTable() {
