@@ -1,6 +1,6 @@
 'use client';
 
-import socket from '@/libs/socket';
+import { useAuthContext } from '@/contexts/auth-context';
 import { checkAndRefreshToken } from '@/libs/utils/local-authentication';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -19,6 +19,7 @@ const UNAUTHENTICATED_PATHS = [
 export const RefreshToken = () => {
   const pathName = usePathname();
   const router = useRouter();
+  const { socket, setSocket, disconnectSocket } = useAuthContext();
 
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathName)) return;
@@ -31,6 +32,7 @@ export const RefreshToken = () => {
       checkAndRefreshToken({
         onError() {
           clearInterval(interval);
+          disconnectSocket();
           router.push('/login');
         },
         forceToRefresh
@@ -41,33 +43,33 @@ export const RefreshToken = () => {
 
     interval = setInterval(onCheckRefreshToken, TIMEOUT_TIME);
 
-    if (socket.connected) {
+    if (socket?.connected) {
       onConnect();
     }
 
     function onConnect() {
-      console.log('connected', socket.id);
+      console.log('connected', socket?.id);
     }
 
     function onDisconnect() {
-      console.log('disconnected', socket.id);
+      console.log('disconnected');
     }
 
     function onRefreshToken() {
       onCheckRefreshToken(true);
     }
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('refresh-token', onRefreshToken);
+    socket?.on('connect', onConnect);
+    socket?.on('disconnect', onDisconnect);
+    socket?.on('refresh-token', onRefreshToken);
 
     return () => {
       clearInterval(interval);
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('refresh-token', onRefreshToken);
+      socket?.off('connect', onConnect);
+      socket?.off('disconnect', onDisconnect);
+      socket?.off('refresh-token', onRefreshToken);
     };
-  }, [pathName, router]);
+  }, [pathName, router, disconnectSocket, socket]);
 
   return null;
 };

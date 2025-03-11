@@ -22,7 +22,7 @@ export default function DropdownAvatar() {
   const account = data?.payload.data;
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
-  const { setRole } = useAuthContext();
+  const { setRole, disconnectSocket } = useAuthContext();
 
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;
@@ -30,6 +30,7 @@ export default function DropdownAvatar() {
     try {
       await logoutMutation.mutateAsync();
       setRole(undefined);
+      disconnectSocket();
       router.push('/');
     } catch (error) {
       const _error = error as Error;

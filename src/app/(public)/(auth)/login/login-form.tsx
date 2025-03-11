@@ -11,6 +11,7 @@ import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
+import { initSocketInstance } from '@/libs/utils/init-socket';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -28,7 +29,7 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const clearTokens = searchParams.get('clearTokens');
-  const { setRole } = useAuthContext();
+  const { setRole, setSocket } = useAuthContext();
 
   useEffect(() => {
     // WHY: Xử lý trường hợp lâu ngày vào web thì refresh token hết hạn => redirect về trang login và xoá tất cả tokens
@@ -46,7 +47,7 @@ export default function LoginForm() {
         description: response.payload.message
       });
       setRole(response.payload.data.account.role);
-
+      setSocket(initSocketInstance(response.payload.data.accessToken));
       router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });

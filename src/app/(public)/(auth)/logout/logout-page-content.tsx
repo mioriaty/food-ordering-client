@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/contexts/auth-context';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/libs/utils/local-authentication';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,6 +11,7 @@ export function LogoutPageContent() {
   const router = useRouter();
   const ref = useRef<typeof mutateAsync | null>(null);
   const searchParams = useSearchParams();
+  const { setRole, disconnectSocket } = useAuthContext();
   const refreshTokenFromUrl = searchParams.get('refreshToken');
   const accessTokenFromUrl = searchParams.get('accessToken');
 
@@ -29,13 +31,14 @@ export function LogoutPageContent() {
         setTimeout(() => {
           ref.current = null;
         }, 1000);
-
+        setRole(undefined);
+        disconnectSocket();
         router.push('/login');
       });
     } else {
       router.push('/');
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl]);
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setRole, disconnectSocket]);
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">

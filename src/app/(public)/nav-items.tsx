@@ -58,7 +58,7 @@ const menuItems: NavItem[] = [
 // Client: Đầu tiên client sẽ hiển thị là Món ăn, Đăng nhập.
 // Nhưng ngay sau đố thì client render ra là Món ăn, Đơn hàng, Đăng nhập, Quản lý do đã được check trạng thái đăng nhập của user
 export default function NavItems({ className }: { className?: string }) {
-  const { role, setRole } = useAuthContext();
+  const { role, setRole, disconnectSocket } = useAuthContext();
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
 
@@ -68,6 +68,7 @@ export default function NavItems({ className }: { className?: string }) {
     try {
       await logoutMutation.mutateAsync();
       setRole(undefined);
+      disconnectSocket();
       router.push('/');
     } catch (error) {
       handleErrorApi({ error });

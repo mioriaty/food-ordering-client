@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/contexts/auth-context';
 import { GuestCreateOrdersResType } from '@/domain/schemas/guest.schema';
 import { GetOrdersResType, PayGuestOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGetOrderListQuery, useUpdateOrderMutation } from '@/infrastructure/queries/useOrder';
@@ -13,7 +14,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/libs/components/ui/po
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/libs/components/ui/table';
 import { toast } from '@/libs/components/ui/use-toast';
 import { OrderStatusValues } from '@/libs/constants/type';
-import socket from '@/libs/socket';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cn } from '@/libs/utils/string';
@@ -66,6 +66,7 @@ const initToDate = endOfDay(new Date());
 
 export default function OrderTable() {
   const searchParam = useSearchParams();
+  const { socket } = useAuthContext();
 
   const [openStatusFilter, setOpenStatusFilter] = useState(false);
   const [fromDate, setFromDate] = useState(initFromDate);
@@ -120,16 +121,16 @@ export default function OrderTable() {
   });
 
   useEffect(() => {
-    if (socket.connected) {
+    if (socket?.connected) {
       onConnect();
     }
 
     function onConnect() {
-      console.log('connected', socket.id);
+      console.log('connected', socket?.id);
     }
 
     function onDisconnect() {
-      console.log('disconnected', socket.id);
+      console.log('disconnected');
     }
 
     function refetch() {
@@ -165,20 +166,20 @@ export default function OrderTable() {
       refetch();
     }
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('new-order', onListenNewOrder);
-    socket.on('update-order', onUpdateOrder);
-    socket.on('payment', onPayment);
+    socket?.on('connect', onConnect);
+    socket?.on('disconnect', onDisconnect);
+    socket?.on('new-order', onListenNewOrder);
+    socket?.on('update-order', onUpdateOrder);
+    socket?.on('payment', onPayment);
 
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('new-order', onListenNewOrder);
-      socket.off('update-order', onUpdateOrder);
-      socket.off('payment', onPayment);
+      socket?.off('connect', onConnect);
+      socket?.off('disconnect', onDisconnect);
+      socket?.off('new-order', onListenNewOrder);
+      socket?.off('update-order', onUpdateOrder);
+      socket?.off('payment', onPayment);
     };
-  }, [fromDate, refetchOrderList, toDate]);
+  }, [fromDate, refetchOrderList, toDate, socket]);
 
   useEffect(() => {
     table.setPagination({

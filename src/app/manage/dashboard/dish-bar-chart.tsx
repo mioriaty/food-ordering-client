@@ -1,11 +1,10 @@
 'use client';
 
 import { DashboardIndicatorResType } from '@/domain/schemas/indicator.schema';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/libs/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/libs/components/ui/chart';
-import { TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 const chartConfig = {
   visitors: {
@@ -64,28 +63,26 @@ export function DishBarChart({ data }: DishBarChartProps) {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              accessibilityLayer
-              data={chartData}
-              layout="vertical"
-              margin={{
-                left: 5
-              }}
-            >
-              <YAxis
-                dataKey="name"
-                type="category"
-                tickLine={false}
-                tickMargin={2}
-                axisLine={false}
-                tickFormatter={(value) => value}
-              />
-              <XAxis dataKey="successOrders" type="number" hide />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Bar dataKey="successOrders" name={'Đơn thanh toán: '} layout="vertical" radius={5} />
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 5
+            }}
+          >
+            <YAxis
+              dataKey="name"
+              type="category"
+              tickLine={false}
+              tickMargin={2}
+              axisLine={false}
+              tickFormatter={(value) => value}
+            />
+            <XAxis dataKey="successOrders" type="number" hide />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <Bar dataKey="successOrders" name={'Đơn thanh toán: '} layout="vertical" radius={5} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
       {/* <CardFooter className="flex-col items-start gap-2 text-sm">

@@ -9,6 +9,7 @@ import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/for
 import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
+import { initSocketInstance } from '@/libs/utils/init-socket';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -24,7 +25,7 @@ export default function GuestLoginForm() {
   const router = useRouter();
 
   const loginMutation = useGuestLoginMutation();
-  const { setRole } = useAuthContext();
+  const { setRole, setSocket } = useAuthContext();
 
   const form = useForm<GuestLoginBodyType>({
     resolver: zodResolver(GuestLoginBody),
@@ -47,6 +48,7 @@ export default function GuestLoginForm() {
     try {
       const response = await loginMutation.mutateAsync(values);
       setRole(response.payload.data.guest.role);
+      setSocket(initSocketInstance(response.payload.data.accessToken));
       router.push('/guest/menu');
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });

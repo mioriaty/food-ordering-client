@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/contexts/auth-context';
 import { Button } from '@/libs/components/ui/button';
 import {
   Sheet,
@@ -18,6 +19,8 @@ import menuItems from '@/app/manage/menu-items';
 
 export default function MobileNavLinks() {
   const pathname = usePathname();
+  const { role } = useAuthContext();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -41,6 +44,8 @@ export default function MobileNavLinks() {
           </Link>
           {menuItems.map((Item, index) => {
             const isActive = pathname === Item.href;
+            if (role && !Item.role?.includes(role)) return null;
+
             return (
               <Link
                 key={index}

@@ -19,6 +19,11 @@ export const removeTokensFromLocalStorage = () => {
   }
 };
 
+export const getRoleFromClient = () => {
+  const accessToken = getAccessTokenFromLocalStorage();
+  return accessToken ? decodeToken(accessToken).role : undefined;
+};
+
 export const checkAndRefreshToken = async (param?: {
   onError?: () => void;
   onSuccess?: () => void;
