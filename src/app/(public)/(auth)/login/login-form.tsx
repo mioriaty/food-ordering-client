@@ -1,5 +1,6 @@
 'use client';
 
+import envConfig from '@/configs/env.config';
 import { useAuthContext } from '@/contexts/auth-context';
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
@@ -13,9 +14,28 @@ import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+
+const getOauthGoogleUrl = () => {
+  const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+  const options = {
+    redirect_uri: envConfig.NEXT_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI,
+    client_id: envConfig.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    access_type: 'offline',
+    response_type: 'code',
+    prompt: 'consent',
+    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(
+      ' '
+    )
+  };
+  const qs = new URLSearchParams(options);
+  return `${rootUrl}?${qs.toString()}`;
+};
+
+const googleOAuthUrl = getOauthGoogleUrl();
 
 export default function LoginForm() {
   const form = useForm<LoginBodyType>({
@@ -105,9 +125,12 @@ export default function LoginForm() {
               >
                 Đăng nhập
               </LoadingButton>
-              <Button variant="outline" className="w-full" type="button">
-                Đăng nhập bằng Google
-              </Button>
+
+              <Link href={googleOAuthUrl}>
+                <Button variant="outline" className="w-full" type="button">
+                  Đăng nhập bằng Google
+                </Button>
+              </Link>
             </div>
           </form>
         </Form>

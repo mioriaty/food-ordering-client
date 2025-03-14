@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthProvider } from '@/contexts/auth-context';
+import { ListenLogoutSocket } from '@/libs/components/listen-logout-socket';
 import { RefreshToken } from '@/libs/components/refresh-token';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -19,6 +20,7 @@ export function TanstackProvider({ children }: Readonly<{ children: React.ReactN
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <RefreshToken />
+        <ListenLogoutSocket />
         {children}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

@@ -19,7 +19,7 @@ const UNAUTHENTICATED_PATHS = [
 export const RefreshToken = () => {
   const pathName = usePathname();
   const router = useRouter();
-  const { socket, setSocket, disconnectSocket } = useAuthContext();
+  const { socket, disconnectSocket } = useAuthContext();
 
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathName)) return;

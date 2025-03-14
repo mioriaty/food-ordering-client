@@ -19,6 +19,8 @@ export const handleErrorApi = ({
       });
     });
   } else {
+    console.log('error', error);
+
     toast({
       title: 'Lỗi',
       description: error?.payload?.message ?? 'Lỗi không xác định',

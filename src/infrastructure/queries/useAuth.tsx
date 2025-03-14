@@ -12,3 +12,9 @@ export const useLogoutMutation = () => {
     mutationFn: authService.logout
   });
 };
+
+export const useSetTokenToCookieMutation = () => {
+  return useMutation({
+    mutationFn: authService.setTokenToCookie
+  });
+};

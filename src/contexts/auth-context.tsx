@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [role, setRoleState] = useState<RoleType | undefined>(undefined);
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const count = useRef(0);
+  // useListenLogoutSocket({ socket });
 
   useEffect(() => {
     if (count.current === 0) {

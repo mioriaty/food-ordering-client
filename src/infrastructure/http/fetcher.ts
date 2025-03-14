@@ -94,7 +94,7 @@ const request = async <Response>(
     status: res.status,
     payload
   };
-  // Interceptor là nời chúng ta xử lý request và response trước khi trả về cho phía component
+  // Interceptor là nơi chúng ta xử lý request và response trước khi trả về cho phía component
   if (!res.ok) {
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError(
@@ -145,6 +145,13 @@ const request = async <Response>(
 
     if (loginRoutes.includes(normalizeUrl)) {
       const { accessToken, refreshToken } = (payload as LoginResType).data;
+      setAccessTokenToLocalStorage(accessToken);
+      setRefreshTokenToLocalStorage(refreshToken);
+    } else if ('api/auth/token' === normalizeUrl) {
+      const { accessToken, refreshToken } = payload as {
+        accessToken: string;
+        refreshToken: string;
+      };
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
     } else if (logoutRoutes.includes(normalizeUrl)) {

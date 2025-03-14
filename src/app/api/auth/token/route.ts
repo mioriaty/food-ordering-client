@@ -1,16 +1,14 @@
-import { LoginBodyType } from '@/domain/schemas/auth.schema';
 import { HttpError } from '@/infrastructure/http/fetcher';
-import authService from '@/infrastructure/services/auth.service';
 import { decodeToken } from '@/libs/utils/decode-token';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as LoginBodyType;
+  const body = (await request.json()) as { accessToken: string; refreshToken: string };
+
   const cookieStore = cookies();
 
   try {
-    const { payload } = await authService.sLogin(body);
-    const { accessToken, refreshToken } = payload.data;
+    const { accessToken, refreshToken } = body;
 
     const decodedAccessToken = decodeToken(accessToken);
     const decodedRefreshToken = decodeToken(refreshToken);
@@ -31,7 +29,7 @@ export async function POST(request: Request) {
       expires: decodedRefreshToken.exp * 1000
     });
 
-    return Response.json(payload); // api từ server trả về cái gì thì trả về client cái đó
+    return Response.json(body);
   } catch (error) {
     if (error instanceof HttpError) {
       return Response.json(error.payload, {
