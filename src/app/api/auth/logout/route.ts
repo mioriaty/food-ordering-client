@@ -1,6 +1,4 @@
-import { HttpError } from '@/infrastructure/http/fetcher';
 import authService from '@/infrastructure/services/auth.service';
-import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cookies } from 'next/headers';
 
 export async function POST(_request: Request) {

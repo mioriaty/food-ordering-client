@@ -1,20 +1,15 @@
-import { DishListResType } from '@/domain/schemas/dish.schema';
 import dishService from '@/infrastructure/services/dish.service';
 import { formatCurrency } from '@/libs/utils/format-currency';
+import { wrapServerApi } from '@/libs/utils/wrap-server-api';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default async function Home() {
-  let dishes: DishListResType['data'] = [];
+  const data = await wrapServerApi(() => dishService.list());
+  const dishes = data?.payload?.data;
 
-  try {
-    const data = await dishService.list();
-    const {
-      payload: { data: dishesResponse }
-    } = data;
-
-    dishes = dishesResponse;
-  } catch (error) {
-    return <div>Something went wrong!</div>;
+  if (!dishes) {
+    return <div>Not found any dishes</div>;
   }
 
   return (
@@ -23,7 +18,7 @@ export default async function Home() {
         <h2 className="text-center text-2xl font-bold">Đa dạng các món ăn</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {dishes.map((dish) => (
-            <div className="flex gap-4 w" key={dish.id}>
+            <Link href={`/dishes/${dish.id}`} className="flex gap-4 w" key={dish.id}>
               <div className="flex-shrink-0">
                 <Image
                   alt={dish.name}
@@ -39,7 +34,7 @@ export default async function Home() {
                 <p className="">{dish.description}</p>
                 <p className="font-semibold">{formatCurrency(dish.price)}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

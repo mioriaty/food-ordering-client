@@ -1,7 +1,5 @@
-import { HttpError } from '@/infrastructure/http/fetcher';
 import authService from '@/infrastructure/services/auth.service';
 import { decodeToken } from '@/libs/utils/decode-token';
-import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cookies } from 'next/headers';
 
 export async function POST() {
@@ -11,7 +9,7 @@ export async function POST() {
   if (!currentRefreshToken) {
     return Response.json(
       {
-        message: 'Không nhận được accessToken hoặc refreshToken từ client'
+        message: 'Không nhận được refreshToken từ client'
       },
       { status: 401 }
     );
