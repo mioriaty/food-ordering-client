@@ -42,6 +42,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
     "date-fns": "^3.6.0",
+    "immer": "^10.1.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
@@ -61,7 +62,8 @@
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.5.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.58.1",

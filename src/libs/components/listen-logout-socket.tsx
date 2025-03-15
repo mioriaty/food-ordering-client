@@ -1,6 +1,6 @@
-import { useAuthContext } from '@/contexts/auth-context';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
+import { useAuthStore } from '@/stores/auth.store';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -12,7 +12,9 @@ export const ListenLogoutSocket = () => {
   // Tại sao cần lấy mutateAsync, isPending từ useLogoutMutation()
   // Để tránh thay đổi tham chiếu khi re-render
   const { mutateAsync, isPending } = useLogoutMutation();
-  const { socket, setRole, disconnectSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
+  const socket = useAuthStore((state) => state.socket);
 
   useEffect(() => {
     if (!socket) return;

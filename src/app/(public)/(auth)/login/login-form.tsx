@@ -1,7 +1,6 @@
 'use client';
 
 import envConfig from '@/configs/env.config';
-import { useAuthContext } from '@/contexts/auth-context';
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
 import { LoadingButton } from '@/libs/components/loading-button';
@@ -13,6 +12,7 @@ import { Label } from '@/libs/components/ui/label';
 import { toast } from '@/libs/components/ui/use-toast';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
+import { useAuthStore } from '@/stores/auth.store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -49,7 +49,8 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const clearTokens = searchParams.get('clearTokens');
-  const { setRole, setSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const setSocket = useAuthStore((state) => state.setSocket);
 
   useEffect(() => {
     // WHY: Xử lý trường hợp lâu ngày vào web thì refresh token hết hạn => redirect về trang login và xoá tất cả tokens

@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { GuestCreateOrdersResType } from '@/domain/schemas/guest.schema';
 import { GetOrdersResType, PayGuestOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGetOrderListQuery, useUpdateOrderMutation } from '@/infrastructure/queries/useOrder';
@@ -17,6 +16,7 @@ import { OrderStatusValues } from '@/libs/constants/type';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cn } from '@/libs/utils/string';
+import { useAuthStore } from '@/stores/auth.store';
 import {
   ColumnFiltersState,
   SortingState,
@@ -66,7 +66,7 @@ const initToDate = endOfDay(new Date());
 
 export default function OrderTable() {
   const searchParam = useSearchParams();
-  const { socket } = useAuthContext();
+  const socket = useAuthStore((state) => state.socket);
 
   const [openStatusFilter, setOpenStatusFilter] = useState(false);
   const [fromDate, setFromDate] = useState(initFromDate);
@@ -130,7 +130,7 @@ export default function OrderTable() {
     }
 
     function onDisconnect() {
-      console.log('disconnected');
+      console.log('disconnected', socket?.id);
     }
 
     function refetch() {

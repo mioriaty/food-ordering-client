@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { useMeQuery } from '@/infrastructure/queries/useAccount';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger
 } from '@/libs/components/ui/dropdown-menu';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
+import { useAuthStore } from '@/stores/auth.store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -22,7 +22,8 @@ export default function DropdownAvatar() {
   const account = data?.payload.data;
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
-  const { setRole, disconnectSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
 
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;

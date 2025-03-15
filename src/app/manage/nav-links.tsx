@@ -1,8 +1,8 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/libs/components/ui/tooltip';
 import { cn } from '@/libs/utils/string';
+import { useAuthStore } from '@/stores/auth.store';
 import { Package2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -11,7 +11,7 @@ import menuItems from '@/app/manage/menu-items';
 
 export default function NavLinks() {
   const pathname = usePathname();
-  const { role } = useAuthContext();
+  const role = useAuthStore((state) => state.role);
 
   return (
     <TooltipProvider>
@@ -22,7 +22,7 @@ export default function NavLinks() {
             className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
           >
             <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
-            <span className="sr-only">Acme Inc</span>
+            <span className="sr-only">Duong&apos;s Restaurant</span>
           </Link>
 
           {menuItems.map((Item, index) => {

@@ -1,7 +1,7 @@
-import { TanstackProvider } from '@/libs/components/tanstack-provider';
-import { ThemeProvider } from '@/libs/components/theme-provider';
 import { Toaster } from '@/libs/components/ui/toaster';
 import { cn } from '@/libs/utils/string';
+import { TanstackProvider } from '@/providers/tanstack-provider';
+import { ThemeProvider } from '@/providers/theme-provider';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 
@@ -12,7 +12,8 @@ const fontSans = FontSans({
   variable: '--font-sans'
 });
 export const metadata: Metadata = {
-  title: 'Duongggggg',
+  // eslint-disable-next-line quotes
+  title: "Duong's restaurant",
   description: 'The best restaurant in the world'
 };
 

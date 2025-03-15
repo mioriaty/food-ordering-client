@@ -1,8 +1,8 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/libs/utils/local-authentication';
+import { useAuthStore } from '@/stores/auth.store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -11,7 +11,8 @@ export function LogoutPageContent() {
   const router = useRouter();
   const ref = useRef<typeof mutateAsync | null>(null);
   const searchParams = useSearchParams();
-  const { setRole, disconnectSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
   const refreshTokenFromUrl = searchParams.get('refreshToken');
   const accessTokenFromUrl = searchParams.get('accessToken');
 

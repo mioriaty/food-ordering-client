@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { GuestLoginBody, GuestLoginBodyType } from '@/domain/schemas/guest.schema';
 import { useGuestLoginMutation } from '@/infrastructure/queries/useGuest';
 import { LoadingButton } from '@/libs/components/loading-button';
@@ -10,6 +9,7 @@ import { Input } from '@/libs/components/ui/input';
 import { Label } from '@/libs/components/ui/label';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
+import { useAuthStore } from '@/stores/auth.store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -25,7 +25,8 @@ export default function GuestLoginForm() {
   const router = useRouter();
 
   const loginMutation = useGuestLoginMutation();
-  const { setRole, setSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const setSocket = useAuthStore((state) => state.setSocket);
 
   const form = useForm<GuestLoginBodyType>({
     resolver: zodResolver(GuestLoginBody),

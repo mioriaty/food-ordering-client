@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { Button } from '@/libs/components/ui/button';
 import {
   Sheet,
@@ -11,6 +10,7 @@ import {
   SheetTrigger
 } from '@/libs/components/ui/sheet';
 import { cn } from '@/libs/utils/string';
+import { useAuthStore } from '@/stores/auth.store';
 import { Package2, PanelLeft } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,7 +19,7 @@ import menuItems from '@/app/manage/menu-items';
 
 export default function MobileNavLinks() {
   const pathname = usePathname();
-  const { role } = useAuthContext();
+  const role = useAuthStore((state) => state.role);
 
   return (
     <Sheet>

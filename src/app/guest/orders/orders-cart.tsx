@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { PayGuestOrdersResType, UpdateOrderResType } from '@/domain/schemas/order.schema';
 import { useGuestGetOrderListQuery } from '@/infrastructure/queries/useGuest';
 import { Badge } from '@/libs/components/ui/badge';
@@ -8,12 +7,13 @@ import { toast } from '@/libs/components/ui/use-toast';
 import { OrderStatus } from '@/libs/constants/type';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
+import { useAuthStore } from '@/stores/auth.store';
 import Image from 'next/image';
 import { useEffect, useMemo } from 'react';
 
 export const OrdersCart = () => {
   const { data, refetch } = useGuestGetOrderListQuery();
-  const { socket } = useAuthContext();
+  const socket = useAuthStore((state) => state.socket);
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
   const { waitForPayment, paid } = useMemo(() => {

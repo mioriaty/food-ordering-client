@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import {
   AlertDialog,
@@ -17,6 +16,7 @@ import { Role } from '@/libs/constants/type';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { cn } from '@/libs/utils/string';
 import { RoleType } from '@/shared/types/jwt.types';
+import { useAuthStore } from '@/stores/auth.store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -58,7 +58,10 @@ const menuItems: NavItem[] = [
 // Client: Đầu tiên client sẽ hiển thị là Món ăn, Đăng nhập.
 // Nhưng ngay sau đố thì client render ra là Món ăn, Đơn hàng, Đăng nhập, Quản lý do đã được check trạng thái đăng nhập của user
 export default function NavItems({ className }: { className?: string }) {
-  const { role, setRole, disconnectSocket } = useAuthContext();
+  const role = useAuthStore((state) => state.role);
+  const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
+  const setRole = useAuthStore((state) => state.setRole);
+
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
 

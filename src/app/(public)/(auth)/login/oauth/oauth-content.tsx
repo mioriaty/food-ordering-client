@@ -1,16 +1,17 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { useSetTokenToCookieMutation } from '@/infrastructure/queries/useAuth';
 import { toast } from '@/libs/components/ui/use-toast';
 import { decodeToken } from '@/libs/utils/decode-token';
 import { initSocketInstance } from '@/libs/utils/init-socket';
+import { useAuthStore } from '@/stores/auth.store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 export const OAuthContent = () => {
   const { mutateAsync } = useSetTokenToCookieMutation();
-  const { setRole, setSocket } = useAuthContext();
+  const setRole = useAuthStore((state) => state.setRole);
+  const setSocket = useAuthStore((state) => state.setSocket);
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessToken = searchParams.get('accessToken');
@@ -19,7 +20,9 @@ export const OAuthContent = () => {
   const ref = useRef(0);
 
   useEffect(() => {
-    if (accessToken && refreshToken && ref.current === 0) {
+    if (ref.current !== 0) return;
+
+    if (accessToken && refreshToken) {
       mutateAsync({ accessToken, refreshToken })
         .then(() => {
           setRole(decodeToken(accessToken).role);
@@ -31,6 +34,7 @@ export const OAuthContent = () => {
             description: e?.message || 'Xác thực thất bại',
             variant: 'destructive'
           });
+          router.push('/login');
         });
       ref.current++;
     } else {
@@ -38,6 +42,7 @@ export const OAuthContent = () => {
         description: message || 'Xác thực thất bại',
         variant: 'destructive'
       });
+      router.push('/login');
     }
   }, [accessToken, refreshToken, setRole, setSocket, router, message, mutateAsync]);
 

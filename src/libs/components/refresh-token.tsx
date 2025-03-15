@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuthContext } from '@/contexts/auth-context';
 import { checkAndRefreshToken } from '@/libs/utils/local-authentication';
+import { useAuthStore } from '@/stores/auth.store';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -19,7 +19,8 @@ const UNAUTHENTICATED_PATHS = [
 export const RefreshToken = () => {
   const pathName = usePathname();
   const router = useRouter();
-  const { socket, disconnectSocket } = useAuthContext();
+  const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
+  const socket = useAuthStore((state) => state.socket);
 
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathName)) return;
@@ -52,7 +53,7 @@ export const RefreshToken = () => {
     }
 
     function onDisconnect() {
-      console.log('disconnected');
+      console.log('disconnected', socket?.id);
     }
 
     function onRefreshToken() {
