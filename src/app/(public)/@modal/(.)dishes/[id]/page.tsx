@@ -1,6 +1,7 @@
 import dishService from '@/infrastructure/services/dish.service';
 import { wrapServerApi } from '@/libs/utils/wrap-server-api';
 
+import DishModal from '@/app/(public)/@modal/(.)dishes/[id]/modal';
 import { DishDetailContent } from '@/app/(public)/dishes/[id]/dish-detail';
 
 interface DishDetailPageProps {
@@ -12,5 +13,9 @@ export default async function DishDetailPage({ params }: { params: DishDetailPag
   const data = await wrapServerApi(() => dishService.getOne(Number(id)));
   const dish = data?.payload?.data;
 
-  return <DishDetailContent dish={dish} />;
+  return (
+    <DishModal>
+      <DishDetailContent dish={dish} />
+    </DishModal>
+  );
 }
