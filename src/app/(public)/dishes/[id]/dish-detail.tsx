@@ -12,7 +12,7 @@ export const DishDetailContent = ({ dish }: DishDetailPageProps) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Image
         alt={dish.name}
         src={dish.image}
