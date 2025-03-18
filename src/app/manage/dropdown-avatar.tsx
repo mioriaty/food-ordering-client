@@ -14,6 +14,7 @@ import {
 } from '@/libs/components/ui/dropdown-menu';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { useAuthStore } from '@/stores/auth.store';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -24,6 +25,7 @@ export default function DropdownAvatar() {
   const router = useRouter();
   const setRole = useAuthStore((state) => state.setRole);
   const disconnectSocket = useAuthStore((state) => state.disconnectSocket);
+  const t = useTranslations('Navigation');
 
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;
@@ -60,7 +62,7 @@ export default function DropdownAvatar() {
         <DropdownMenuItem className="cursor-pointer">Hỗ trợ</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
-          Đăng xuất
+          {t('logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

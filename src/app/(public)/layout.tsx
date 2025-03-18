@@ -1,4 +1,5 @@
 import DarkModeToggle from '@/libs/components/dark-mode-toggle';
+import { SelectLanguage } from '@/libs/components/select-language';
 import { Button } from '@/libs/components/ui/button';
 import {
   Sheet,
@@ -53,7 +54,8 @@ export default function Layout({
             </nav>
           </SheetContent>
         </Sheet>
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2 items-center">
+          <SelectLanguage />
           <DarkModeToggle />
         </div>
       </header>
