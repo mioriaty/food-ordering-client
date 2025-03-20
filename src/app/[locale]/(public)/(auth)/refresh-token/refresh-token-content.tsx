@@ -1,7 +1,8 @@
 'use client';
 
+import { useRouter } from '@/i18n/navigation';
 import { checkAndRefreshToken, getRefreshTokenFromLocalStorage } from '@/libs/utils/local-authentication';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 // WHY: Trường hợp lâu ngày không vào website thì access token hết hạn

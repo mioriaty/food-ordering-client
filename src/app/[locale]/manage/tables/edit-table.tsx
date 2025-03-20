@@ -1,6 +1,7 @@
 'use client';
 
 import { UpdateTableBody, UpdateTableBodyType } from '@/domain/schemas/table.schema';
+import { Link } from '@/i18n/navigation';
 import { useGetTableByIdQuery, useUpdateTableMutation } from '@/infrastructure/queries/useTable';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { QRCodeTable } from '@/libs/components/qr-code-table';
@@ -16,19 +17,16 @@ import { getTableLink } from '@/libs/utils/get-table-link';
 import { getVietnameseTableStatus } from '@/libs/utils/get-vn-table-status';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function EditTable({
-  id,
-  setId,
-  onSubmitSuccess
-}: {
+interface EditTableProps {
   id?: number | undefined;
   setId: (value: number | undefined) => void;
   onSubmitSuccess?: () => void;
-}) {
+}
+
+const EditTable = ({ id, setId, onSubmitSuccess }: EditTableProps) => {
   const { data } = useGetTableByIdQuery({ id: id as number, enabledCall: Boolean(id) });
   const updateTableMutation = useUpdateTableMutation();
 
@@ -224,4 +222,6 @@ export default function EditTable({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default EditTable;

@@ -1,5 +1,6 @@
 'use client';
 
+import { Link, useRouter } from '@/i18n/navigation';
 import { useMeQuery } from '@/infrastructure/queries/useAccount';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/libs/components/ui/avatar';
@@ -15,8 +16,6 @@ import {
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export default function DropdownAvatar() {
   const { data } = useMeQuery();

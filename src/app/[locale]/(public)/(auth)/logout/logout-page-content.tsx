@@ -1,9 +1,10 @@
 'use client';
 
+import { useRouter } from '@/i18n/navigation';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/libs/utils/local-authentication';
 import { useAuthStore } from '@/stores/auth.store';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 export function LogoutPageContent() {

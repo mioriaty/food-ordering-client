@@ -1,6 +1,7 @@
 'use client';
 
 import { GuestLoginBody, GuestLoginBodyType } from '@/domain/schemas/guest.schema';
+import { useRouter } from '@/i18n/navigation';
 import { useGuestLoginMutation } from '@/infrastructure/queries/useGuest';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/libs/components/ui/card';
@@ -11,7 +12,7 @@ import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
 import { useAuthStore } from '@/stores/auth.store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 

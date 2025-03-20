@@ -1,7 +1,7 @@
 'use client';
 
+import { useRouter } from '@/i18n/navigation';
 import { Dialog, DialogContent } from '@/libs/components/ui/dialog';
-import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
 export default function DishModal({ children }: { children: ReactNode }) {

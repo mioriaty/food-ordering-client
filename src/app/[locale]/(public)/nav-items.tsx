@@ -1,5 +1,6 @@
 'use client';
 
+import { Link, useRouter } from '@/i18n/navigation';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import {
   AlertDialog,
@@ -18,8 +19,6 @@ import { cn } from '@/libs/utils/string';
 import { RoleType } from '@/shared/types/jwt.types';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 interface NavItem {
   title: string;

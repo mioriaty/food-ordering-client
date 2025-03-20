@@ -1,5 +1,5 @@
+import { Link } from '@/i18n/navigation';
 import { Beef } from 'lucide-react';
-import Link from 'next/link';
 
 export default function Footer() {
   return (

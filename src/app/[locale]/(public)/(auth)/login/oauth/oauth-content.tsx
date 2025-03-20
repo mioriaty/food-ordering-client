@@ -1,11 +1,12 @@
 'use client';
 
+import { useRouter } from '@/i18n/navigation';
 import { useSetTokenToCookieMutation } from '@/infrastructure/queries/useAuth';
 import { toast } from '@/libs/components/ui/use-toast';
 import { decodeToken } from '@/libs/utils/decode-token';
 import { initSocketInstance } from '@/libs/utils/init-socket';
 import { useAuthStore } from '@/stores/auth.store';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 export const OAuthContent = () => {

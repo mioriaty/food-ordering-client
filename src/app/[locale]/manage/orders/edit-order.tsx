@@ -15,20 +15,18 @@ import { OrderStatus, OrderStatusValues } from '@/libs/constants/type';
 import { getVietnameseOrderStatus } from '@/libs/utils/get-vn-order-status';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
 
-export default function EditOrder({
-  id,
-  setId,
-  onSubmitSuccess
-}: {
+interface EditOrderProps {
   id?: number | undefined;
   setId: (value: number | undefined) => void;
   onSubmitSuccess?: () => void;
-}) {
+}
+
+const EditOrder: FC<EditOrderProps> = ({ id, setId, onSubmitSuccess }) => {
   const [selectedDish, setSelectedDish] = useState<DishListResType['data'][0] | null>(null);
 
   const updateOrderMutation = useUpdateOrderMutation();
@@ -190,4 +188,6 @@ export default function EditOrder({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default EditOrder;

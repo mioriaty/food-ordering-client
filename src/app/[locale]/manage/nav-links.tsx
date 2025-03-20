@@ -1,11 +1,10 @@
 'use client';
 
+import { Link, usePathname } from '@/i18n/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/libs/components/ui/tooltip';
 import { cn } from '@/libs/utils/string';
 import { useAuthStore } from '@/stores/auth.store';
 import { Package2, Settings } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import menuItems from '@/app/[locale]/manage/menu-items';
 

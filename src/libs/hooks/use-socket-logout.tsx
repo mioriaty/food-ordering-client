@@ -1,8 +1,8 @@
 'use client';
 
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useLogoutMutation } from '@/infrastructure/queries/useAuth';
 import { handleErrorApi } from '@/libs/utils/handle-api-error';
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 

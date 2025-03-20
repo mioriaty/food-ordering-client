@@ -1,8 +1,8 @@
 'use client';
 
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { checkAndRefreshToken } from '@/libs/utils/local-authentication';
 import { useAuthStore } from '@/stores/auth.store';
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 // Những page không check refresh token

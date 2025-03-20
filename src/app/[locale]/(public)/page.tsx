@@ -1,9 +1,9 @@
+import { Link } from '@/i18n/navigation';
 import dishService from '@/infrastructure/services/dish.service';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { wrapServerApi } from '@/libs/utils/wrap-server-api';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export default async function Home() {
   const data = await wrapServerApi(() => dishService.list());

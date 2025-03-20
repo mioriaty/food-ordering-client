@@ -1,5 +1,8 @@
 import envConfig from '@/configs/env.config';
 import { LoginResType } from '@/domain/schemas/auth.schema';
+import { redirect } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
+import { Locale } from '@/libs/constants/locale';
 import {
   getAccessTokenFromLocalStorage,
   removeTokensFromLocalStorage,
@@ -7,7 +10,8 @@ import {
   setRefreshTokenToLocalStorage
 } from '@/libs/utils/local-authentication';
 import { normalizePath } from '@/libs/utils/string';
-import { redirect } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { getLocale } from 'next-intl/server';
 
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;
@@ -105,6 +109,7 @@ const request = async <Response>(
       );
     } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
       if (isClient) {
+        const locale = Cookies.get('NEXT_LOCALE') || routing.defaultLocale;
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch('/api/auth/logout', {
             method: 'POST',
@@ -124,14 +129,19 @@ const request = async <Response>(
             // Nếu không không được xử lý đúng cách
             // Vì nếu rơi vào trường hợp tại trang Login, chúng ta có gọi các API cần access token
             // Mà access token đã bị xóa thì nó lại nhảy vào đây, và cứ thế nó sẽ bị lặp
-            location.href = '/login';
+            location.href = `/${locale}/login`;
           }
         }
       } else {
         // Đây là trường hợp accessToken còn hạn
         // Và chúng ta gọi API ở Next server (server route handler, server components) đến server backend
         const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1];
-        redirect(`/logout?accessToken=${accessToken}`);
+
+        const locale = Cookies.get('NEXT_LOCALE') || routing.defaultLocale;
+        redirect({
+          href: `/logout?accessToken=${accessToken}`,
+          locale: locale as Locale
+        });
       }
     } else {
       throw new HttpError(data);

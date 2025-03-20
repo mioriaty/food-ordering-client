@@ -1,3 +1,4 @@
+import { Link } from '@/i18n/navigation';
 import DarkModeToggle from '@/libs/components/dark-mode-toggle';
 import { SelectLanguage } from '@/libs/components/select-language';
 import { Button } from '@/libs/components/ui/button';
@@ -10,7 +11,6 @@ import {
   SheetTrigger
 } from '@/libs/components/ui/sheet';
 import { Menu, Package2 } from 'lucide-react';
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import NavItems from './nav-items';

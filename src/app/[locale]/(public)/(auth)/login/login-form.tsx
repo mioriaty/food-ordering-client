@@ -2,6 +2,8 @@
 
 import envConfig from '@/configs/env.config';
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
+import { Link } from '@/i18n/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
 import { LoadingButton } from '@/libs/components/loading-button';
 import { Button } from '@/libs/components/ui/button';
@@ -14,8 +16,7 @@ import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
 import { useAuthStore } from '@/stores/auth.store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
