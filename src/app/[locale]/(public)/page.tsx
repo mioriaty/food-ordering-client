@@ -1,11 +1,14 @@
 import { Link } from '@/i18n/navigation';
 import dishService from '@/infrastructure/services/dish.service';
+import { Locale } from '@/libs/constants/locale';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { wrapServerApi } from '@/libs/utils/wrap-server-api';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 
-export default async function Home() {
+export default async function Home({ params: { locale } }: { params: { locale: Locale } }) {
+  setRequestLocale(locale);
+
   const data = await wrapServerApi(() => dishService.list());
   const dishes = data?.payload?.data;
   const t = await getTranslations('DishPage');

@@ -2,10 +2,10 @@
 
 import envConfig from '@/configs/env.config';
 import { LoginBody, LoginBodyType } from '@/domain/schemas/auth.schema';
-import { Link } from '@/i18n/navigation';
-import { useRouter } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { useLoginMutation } from '@/infrastructure/queries/useAuth';
 import { LoadingButton } from '@/libs/components/loading-button';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/libs/components/search-params-loader';
 import { Button } from '@/libs/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
 import { Form, FormField, FormItem, FormMessage } from '@/libs/components/ui/form';
@@ -16,7 +16,7 @@ import { handleErrorApi } from '@/libs/utils/handle-api-error';
 import { initSocketInstance } from '@/libs/utils/init-socket';
 import { useAuthStore } from '@/stores/auth.store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -48,10 +48,12 @@ export default function LoginForm() {
   });
   const loginMutation = useLoginMutation();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const clearTokens = searchParams.get('clearTokens');
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
+
+  const clearTokens = searchParams?.get('clearTokens');
   const setRole = useAuthStore((state) => state.setRole);
   const setSocket = useAuthStore((state) => state.setSocket);
+  const t = useTranslations('Login');
 
   useEffect(() => {
     // WHY: Xử lý trường hợp lâu ngày vào web thì refresh token hết hạn => redirect về trang login và xoá tất cả tokens
@@ -77,10 +79,12 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-auto max-w-[400px] w-full">
+      <SearchParamsLoader onParamsReceived={setSearchParams} />
+
       <CardHeader>
-        <CardTitle className="text-2xl">Đăng nhập</CardTitle>
-        <CardDescription>Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống</CardDescription>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -125,12 +129,12 @@ export default function LoginForm() {
                 type="submit"
                 className="w-full"
               >
-                Đăng nhập
+                {t('buttonLogin')}
               </LoadingButton>
 
               <Link href={googleOAuthUrl}>
                 <Button variant="outline" className="w-full" type="button">
-                  Đăng nhập bằng Google
+                  {t('loginWithGoogle')}
                 </Button>
               </Link>
             </div>

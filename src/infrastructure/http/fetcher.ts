@@ -11,7 +11,6 @@ import {
 } from '@/libs/utils/local-authentication';
 import { normalizePath } from '@/libs/utils/string';
 import Cookies from 'js-cookie';
-import { getLocale } from 'next-intl/server';
 
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;

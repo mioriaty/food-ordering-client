@@ -10,18 +10,24 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/libs/components/ui/sheet';
+import { Locale } from '@/libs/constants/locale';
 import { Menu, Package2 } from 'lucide-react';
+import { setRequestLocale } from 'next-intl/server';
 import { ReactNode } from 'react';
 
 import NavItems from './nav-items';
 
 export default function Layout({
   children,
-  modal
+  modal,
+  params: { locale }
 }: Readonly<{
   children: ReactNode;
   modal: ReactNode;
+  params: { locale: Locale };
 }>) {
+  setRequestLocale(locale);
+
   return (
     <div className="flex min-h-screen w-full flex-col relative">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
