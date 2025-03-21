@@ -2,6 +2,7 @@ import { Link } from '@/i18n/navigation';
 import dishService from '@/infrastructure/services/dish.service';
 import { Locale } from '@/libs/constants/locale';
 import { formatCurrency } from '@/libs/utils/format-currency';
+import { generateSlugURL } from '@/libs/utils/generate-slug-url';
 import { wrapServerApi } from '@/libs/utils/wrap-server-api';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
@@ -23,7 +24,11 @@ export default async function Home({ params: { locale } }: { params: { locale: L
         <h2 className="text-center text-2xl font-bold">{t('title')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {dishes.map((dish) => (
-            <Link href={`/dishes/${dish.id}`} className="flex gap-4 w" key={dish.id}>
+            <Link
+              href={`/dishes/${generateSlugURL({ id: dish.id, name: dish.name })}`}
+              className="flex gap-4 w"
+              key={dish.id}
+            >
               <div className="flex-shrink-0">
                 <Image
                   alt={dish.name}
