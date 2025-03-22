@@ -4,6 +4,17 @@ import { wrapServerApi } from '@/libs/utils/wrap-server-api';
 
 import { DishDetailContent } from './dish-detail';
 
+// export async function generateStaticParams() {
+//   const data = await wrapServerApi(() => dishService.list());
+//   const dishes = data?.payload?.data ?? [];
+//   return dishes.map((dish) => ({
+//     slug: generateSlugURL({
+//       id: dish.id,
+//       name: dish.name
+//     })
+//   }));
+// }
+
 interface DishDetailPageProps {
   slug: string;
 }
