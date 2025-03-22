@@ -4,9 +4,11 @@ import { Locale, locales } from '@/libs/constants/locale';
 import { cn } from '@/libs/utils/string';
 import { TanstackProvider } from '@/providers/tanstack-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
-import type { Metadata } from 'next';
+import { baseOpenGraph } from '@/shared-metadata';
+import { Metadata } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 
@@ -17,11 +19,22 @@ const fontSans = FontSans({
   variable: '--font-sans'
 });
 
-export const metadata: Metadata = {
-  // eslint-disable-next-line quotes
-  title: "Duong's restaurant",
-  description: 'The best restaurant in the world'
+type Props = {
+  params: Promise<{ locale: Locale }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'HomePage' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      ...baseOpenGraph
+    }
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

@@ -21,6 +21,7 @@ export const DishDetailContent = ({ dish }: DishDetailPageProps) => {
         quality={100}
         className="object-cover w-full max-w-[500px] max-h-[500px] rounded-md"
         loading="lazy"
+        title={dish.name}
       />
       <h2 className="text-2xl font-bold lg:text-3xl">{dish.name}</h2>
       <p className="text-2xl font-bold">Giá: {formatCurrency(dish.price)}</p>

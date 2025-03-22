@@ -1,18 +1,38 @@
+import envConfig from '@/configs/env.config';
 import { Link } from '@/i18n/navigation';
 import dishService from '@/infrastructure/services/dish.service';
 import { Locale } from '@/libs/constants/locale';
 import { formatCurrency } from '@/libs/utils/format-currency';
 import { generateSlugURL } from '@/libs/utils/generate-slug-url';
+import { htmlToTextForDescription } from '@/libs/utils/html-to-text';
 import { wrapServerApi } from '@/libs/utils/wrap-server-api';
+import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
+
+  const { locale } = params;
+
+  const t = await getTranslations({ locale, namespace: 'HomePage' });
+  const url = envConfig.NEXT_PUBLIC_URL + `/${locale}`;
+
+  return {
+    title: t('title'),
+    description: htmlToTextForDescription(t('description')),
+    alternates: {
+      canonical: url
+    }
+  };
+}
 
 export default async function Home({ params: { locale } }: { params: { locale: Locale } }) {
   setRequestLocale(locale);
 
   const data = await wrapServerApi(() => dishService.list());
   const dishes = data?.payload?.data;
-  const t = await getTranslations('DishPage');
+  const t = await getTranslations('HomePage');
 
   if (!dishes) {
     return <div>Not found any dishes</div>;
@@ -20,6 +40,23 @@ export default async function Home({ params: { locale } }: { params: { locale: L
 
   return (
     <div className="w-full space-y-4">
+      <section className="relative z-10">
+        <span className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10"></span>
+        <Image
+          src="/banner.png"
+          width={400}
+          height={200}
+          quality={80}
+          loading="lazy"
+          alt="Banner"
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        />
+        <div className="z-20 relative py-10 md:py-20 px-4 sm:px-10 md:px-20">
+          <h1 className="text-center text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold">{t('title')}</h1>
+          <p className="text-center text-white text-sm sm:text-base mt-4">{t('slogan')}</p>
+        </div>
+      </section>
+
       <section className="space-y-10">
         <h2 className="text-center text-2xl font-bold">{t('title')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
