@@ -7,9 +7,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '4000'
+        hostname: 'https://api-bigboy.duthanhduoc.com',
+        pathname: '/**'
       },
       {
         hostname: 'placehold.co',
