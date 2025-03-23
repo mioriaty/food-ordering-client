@@ -1,5 +1,6 @@
 import { routing } from '@/i18n/routing';
 import Footer from '@/libs/components/footer';
+import { GoogleTag } from '@/libs/components/google-tag';
 import { Toaster } from '@/libs/components/ui/toaster';
 import { Locale, locales } from '@/libs/constants/locale';
 import { cn } from '@/libs/utils/string';
@@ -74,6 +75,8 @@ export default async function RootLayout({
             </ThemeProvider>
           </TanstackProvider>
         </NextIntlClientProvider>
+
+        <GoogleTag />
       </body>
     </html>
   );
