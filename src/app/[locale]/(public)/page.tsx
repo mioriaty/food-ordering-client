@@ -58,7 +58,7 @@ export default async function Home({ params: { locale } }: { params: { locale: L
       </section>
 
       <section className="space-y-10">
-        <h2 className="text-center text-2xl font-bold">{t('title')}</h2>
+        <h2 className="text-center text-2xl font-bold">{t('h2')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {dishes.map((dish) => (
             <Link

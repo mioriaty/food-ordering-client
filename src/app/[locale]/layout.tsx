@@ -11,6 +11,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { getTranslations } from 'next-intl/server';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
+import NextjsTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 
@@ -60,6 +61,7 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning lang={locale}>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <NextjsTopLoader height={2} showSpinner={false} color="hsl(var(--primary))" />
         <NextIntlClientProvider messages={messages}>
           <TanstackProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
