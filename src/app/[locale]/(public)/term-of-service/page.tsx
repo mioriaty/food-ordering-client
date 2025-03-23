@@ -2,7 +2,7 @@ export default function TermsOfServicePage() {
   return (
     <div className="flex flex-col">
       <section className="bg-secondary py-20 px-4 md:px-6 lg:px-8">
-        <div className="max-w-4xl text-center">
+        <div className="text-center">
           <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl">Điều khoản dịch vụ</h1>
         </div>
       </section>

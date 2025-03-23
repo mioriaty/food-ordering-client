@@ -1,4 +1,5 @@
 import { routing } from '@/i18n/routing';
+import Footer from '@/libs/components/footer';
 import { Toaster } from '@/libs/components/ui/toaster';
 import { Locale, locales } from '@/libs/constants/locale';
 import { cn } from '@/libs/utils/string';
@@ -26,11 +27,13 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'HomePage' });
+  const t = await getTranslations({ locale, namespace: 'Brand' });
 
   return {
-    title: t('title'),
-    description: t('description'),
+    title: {
+      template: `%s | ${t('title')}`,
+      default: t('defaultTitle')
+    },
     openGraph: {
       ...baseOpenGraph
     }
@@ -66,6 +69,7 @@ export default async function RootLayout({
           <TanstackProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               {children}
+              <Footer />
               <Toaster />
             </ThemeProvider>
           </TanstackProvider>
