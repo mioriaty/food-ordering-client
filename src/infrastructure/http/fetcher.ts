@@ -135,10 +135,10 @@ const request = async <Response>(
         // Đây là trường hợp accessToken còn hạn
         // Và chúng ta gọi API ở Next server (server route handler, server components) đến server backend
         const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1];
-
         const locale = Cookies.get('NEXT_LOCALE') || routing.defaultLocale;
+
         redirect({
-          href: `/logout?accessToken=${accessToken}`,
+          href: `/login?accessToken=${accessToken}`,
           locale: locale as Locale
         });
       }

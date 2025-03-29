@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import LoginForm from './login-form';
+import Logout from './logout';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -26,6 +27,7 @@ export default function Login({ params: { locale } }: { params: { locale: Locale
   return (
     <div className="min-h-screen flex items-center justify-center">
       <LoginForm />
+      <Logout />
     </div>
   );
 }

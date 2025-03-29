@@ -11,6 +11,7 @@ const guestPaths = ['/vi/guest', '/en/guest'];
 const protectedPaths = [...managePaths, ...guestPaths];
 const unAuthPaths = ['/vi/login', '/en/login'];
 const ownerPaths = ['/vi/manage/accounts', '/en/manage/accounts'];
+const loginPaths = ['/vi/login', '/en/login'];
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
@@ -20,7 +21,7 @@ export function middleware(request: NextRequest) {
 
   response.headers.set('x-default-locale', routing.defaultLocale);
 
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   const accessToken = request?.cookies?.get('accessToken')?.value;
   const refreshToken = request?.cookies?.get('refreshToken')?.value;
@@ -39,9 +40,13 @@ export function middleware(request: NextRequest) {
   if (refreshToken) {
     // 2.1 Nếu cố tình vào trang login thì sẽ redirect về trang chủ
     if (unAuthPaths.some((path) => pathname.startsWith(path))) {
+      const accessToken = searchParams.get('accessToken');
+
+      if (loginPaths.some((path) => pathname.startsWith(path)) && accessToken) {
+        return response;
+      }
+
       const url = new URL(`/${locale}`, request.url);
-      // response.headers.set('x-middleware-rewrite', url.toString());
-      // return response;
       return NextResponse.redirect(url);
     }
 
