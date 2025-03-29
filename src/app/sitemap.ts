@@ -1,6 +1,6 @@
 import envConfig from '@/configs/env.config';
+import { routing } from '@/i18n/routing';
 import dishService from '@/infrastructure/services/dish.service';
-import { locales } from '@/libs/constants/locale';
 import { generateSlugURL } from '@/libs/utils/generate-slug-url';
 import type { MetadataRoute } from 'next';
 
@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const dishList = result.payload.data;
 
-  const localizeStaticSiteMap = locales.reduce((acc, locale) => {
+  const localizeStaticSiteMap = routing.locales.reduce((acc, locale) => {
     return [
       ...acc,
       ...staticRoutes.map((route) => {
@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
   }, [] as MetadataRoute.Sitemap);
 
-  const localizeDishSiteMap = locales.reduce((acc, locale) => {
+  const localizeDishSiteMap = routing.locales.reduce((acc, locale) => {
     const dishListSiteMap: MetadataRoute.Sitemap = dishList.map((dish) => {
       return {
         url: `${envConfig.NEXT_PUBLIC_URL}/${locale}/dishes/${generateSlugURL({

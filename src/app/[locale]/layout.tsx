@@ -2,7 +2,7 @@ import { routing } from '@/i18n/routing';
 import Footer from '@/libs/components/footer';
 import { GoogleTag } from '@/libs/components/google-tag';
 import { Toaster } from '@/libs/components/ui/toaster';
-import { Locale, locales } from '@/libs/constants/locale';
+import { Locale } from '@/libs/constants/locale';
 import { cn } from '@/libs/utils/string';
 import { TanstackProvider } from '@/providers/tanstack-provider';
 import { baseOpenGraph } from '@/shared-metadata';
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale) => ({ locale }));
 }
 
 export default async function RootLayout(

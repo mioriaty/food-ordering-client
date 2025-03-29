@@ -1,8 +1,9 @@
 'use client';
 
 import { usePathname, useRouter } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/components/ui/select';
-import { Locale, locales } from '@/libs/constants/locale';
+import { Locale } from '@/libs/constants/locale';
 import { useLocale, useTranslations } from 'next-intl';
 
 export const SelectLanguage = () => {
@@ -26,7 +27,7 @@ export const SelectLanguage = () => {
         <SelectValue placeholder={t('title')} />
       </SelectTrigger>
       <SelectContent>
-        {locales.map((locale) => (
+        {routing.locales.map((locale) => (
           <SelectItem key={locale} className="cursor-pointer" value={locale}>
             {t(locale)}
           </SelectItem>
