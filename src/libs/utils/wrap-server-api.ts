@@ -1,4 +1,4 @@
-import { isRedirectError } from 'next/dist/client/components/redirect';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export const wrapServerApi = async <T>(fnc: () => Promise<T>) => {
   let result = null;

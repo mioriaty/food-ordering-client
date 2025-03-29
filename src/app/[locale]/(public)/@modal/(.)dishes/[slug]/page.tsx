@@ -10,7 +10,8 @@ interface DishDetailPageProps {
   slug: string;
 }
 
-export default async function DishDetailPage({ params }: { params: DishDetailPageProps }) {
+export default async function DishDetailPage(props: { params: Promise<DishDetailPageProps> }) {
+  const params = await props.params;
   const { slug } = params;
   const id = getIdFromSlugURL(slug);
   const data = await wrapServerApi(() => dishService.getOne(id));

@@ -27,7 +27,13 @@ export async function generateMetadata(props: { params: Promise<{ locale: Locale
   };
 }
 
-export default async function Home({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function Home(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   setRequestLocale(locale);
 
   const data = await wrapServerApi(() => dishService.list());

@@ -5,12 +5,12 @@ import { Toaster } from '@/libs/components/ui/toaster';
 import { Locale, locales } from '@/libs/constants/locale';
 import { cn } from '@/libs/utils/string';
 import { TanstackProvider } from '@/providers/tanstack-provider';
-import { ThemeProvider } from '@/providers/theme-provider';
 import { baseOpenGraph } from '@/shared-metadata';
 import { Metadata } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { getTranslations } from 'next-intl/server';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import NextjsTopLoader from 'nextjs-toploader';
@@ -45,13 +45,18 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function RootLayout({
-  children,
-  params: { locale }
-}: Readonly<{
-  children: React.ReactNode;
-  params: { locale: Locale };
-}>) {
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode;
+    params: Promise<{ locale: Locale }>;
+  }>
+) {
+  const params = await props.params;
+
+  const { locale } = params;
+
+  const { children } = props;
+
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
@@ -68,11 +73,11 @@ export default async function RootLayout({
         <NextjsTopLoader height={2} showSpinner={false} color="hsl(var(--primary))" />
         <NextIntlClientProvider messages={messages}>
           <TanstackProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <NextThemesProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               {children}
               <Footer />
               <Toaster />
-            </ThemeProvider>
+            </NextThemesProvider>
           </TanstackProvider>
         </NextIntlClientProvider>
 

@@ -1,12 +1,12 @@
 import accountService from '@/infrastructure/services/account.service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/libs/components/ui/card';
-import { isRedirectError } from 'next/dist/client/components/redirect';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { cookies } from 'next/headers';
 
 import DashboardMain from './dashboard-main';
 
 export default async function Dashboard() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value as string;
   let name = '';
 

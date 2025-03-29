@@ -3,7 +3,7 @@ import { decodeToken } from '@/libs/utils/decode-token';
 import { cookies } from 'next/headers';
 
 export async function POST() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const currentRefreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!currentRefreshToken) {

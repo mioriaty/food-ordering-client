@@ -17,15 +17,19 @@ import { ReactNode } from 'react';
 
 import NavItems from './nav-items';
 
-export default function Layout({
-  children,
-  modal,
-  params: { locale }
-}: Readonly<{
-  children: ReactNode;
-  modal: ReactNode;
-  params: { locale: Locale };
-}>) {
+export default async function Layout(
+  props: Readonly<{
+    children: ReactNode;
+    modal: ReactNode;
+    params: Promise<{ locale: Locale }>;
+  }>
+) {
+  const params = await props.params;
+
+  const { locale } = params;
+
+  const { children, modal } = props;
+
   setRequestLocale(locale);
 
   return (

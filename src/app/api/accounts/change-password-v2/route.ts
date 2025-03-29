@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 export async function PUT(request: Request) {
   const body = (await request.json()) as ChangePasswordV2BodyType;
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const currentAccessToken = cookieStore.get('accessToken')?.value;
 
   if (!currentAccessToken) {
