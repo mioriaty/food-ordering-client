@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
       {
         hostname: 'placehold.co',
         pathname: '/**'
+      },
+      {
+        hostname: 'api.lazycatdiary.com',
+        pathname: '/**'
       }
     ]
   }
